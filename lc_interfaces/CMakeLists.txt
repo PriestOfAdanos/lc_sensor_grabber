@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Angle.msg"
   "srv/MakeStep.srv"
   "srv/SetStepAngle.srv"
+  "action/StartScan.action"
 )
 
 
