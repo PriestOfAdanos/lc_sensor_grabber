@@ -1,6 +1,5 @@
 import rclpy
 from rclpy.node import Node
-import RPi.GPIO as GPIO 
 import time 
 
 from lc_interfaces.action import StartScan
@@ -21,7 +20,7 @@ class ScanAssembler(Node):
         feedback_msg = StartScan.Feedback()
         feedback_msg.percentage_done = 0
 
-        for i in range(0, 240):
+        for i in range(0, 242):
             feedback_msg.percentage_done = int(i/240)
             goal_handle.publish_feedback(feedback_msg)
             time.sleep(1)
@@ -29,7 +28,7 @@ class ScanAssembler(Node):
         goal_handle.succeed()
 
         result = StartScan.Result()
-        result.sequence = feedback_msg.partial_sequence
+        
         return result
 
 def main(args=None):
@@ -37,7 +36,10 @@ def main(args=None):
 
     scan_assembler_node = ScanAssembler()
 
-    rclpy.spin(scan_assembler_node)
+    try:
+        rclpy.spin(scan_assembler_node)
+    except KeyboardInterrupt:
+        pass
 
     scan_assembler_node.destroy_node()
     rclpy.shutdown()
