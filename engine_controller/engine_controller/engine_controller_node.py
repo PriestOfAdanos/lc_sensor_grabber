@@ -1,4 +1,3 @@
-from logging import raiseExceptions
 import rclpy
 from rclpy.node import Node
 import RPi.GPIO as GPIO 
