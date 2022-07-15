@@ -1,29 +1,22 @@
+import time 
+import math
 from xml.dom import NotFoundErr
+
 import rclpy
 from rclpy.node import Node
+from tf2_ros import TransformBroadcaster
+from geometry_msgs.msg import TransformStamped
+import tf_transformations
+
 try:
     import RPi.GPIO as GPIO 
     PROD_MODE=True
 except RuntimeError:
     PROD_MODE=False
-import time 
+
+
 
 from lc_interfaces.srv import MakeStep, SetStepAngle
-from geometry_msgs.msg import Pose
-
-from tf2_ros import TransformBroadcaster
-import math
-
-from geometry_msgs.msg import TransformStamped
-
-import rclpy
-from rclpy.node import Node
-
-from tf2_ros import TransformBroadcaster
-
-import tf_transformations
-
-from turtlesim.msg import Pose
 
 class EngineControllerNode(Node):
     """Node to make steps on request by set angle."""
