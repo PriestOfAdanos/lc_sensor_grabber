@@ -10,6 +10,7 @@ import tf_transformations
 
 try:
     import RPi.GPIO as GPIO 
+    
     PROD_MODE=True
 except RuntimeError:
     PROD_MODE=False
@@ -43,7 +44,7 @@ class EngineControllerNode(Node):
     def make_step_callback(self, req, res):
         delay = .0208
         if PROD_MODE:
-            GPIO.output(self.DIR, req.make_clockwise_step) # counterclockwise otherwise 
+            GPIO.output(self.direction_pin, req.make_clockwise_step) # counterclockwise otherwise 
             GPIO.output(self.step_pin, GPIO.HIGH)
             time.sleep(delay)
             GPIO.output(self.step_pin, GPIO.LOW)
