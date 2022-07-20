@@ -1,8 +1,10 @@
-import rclpy
-from rclpy.node import Node
-import time 
+import time
 
+import rclpy
 from lc_interfaces.action import StartScan
+from rclpy.action import ActionServer
+from rclpy.node import Node
+
 
 class ScanAssembler(Node):
     """Node that controlls pace of scaning and puts individual scans together."""

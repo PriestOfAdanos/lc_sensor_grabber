@@ -1,5 +1,5 @@
 int32 request
 ---
-sensor_msgs/PointCloud2 pointcloud
+string message
 ---
 int32 percentage_done
