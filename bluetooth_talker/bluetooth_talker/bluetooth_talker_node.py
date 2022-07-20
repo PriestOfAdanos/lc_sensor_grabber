@@ -24,7 +24,7 @@ class BluetoothTalker(Node):
         super().__init__('bluetooth_talker')
         self._action_start_recording_client = ActionClient(self, StartScan, 'start_scan_action_server')
     
-    def start_recording():
+    def start_recording(self):
         goal_msg = StartScan.Goal()
         goal_msg.request = 1
         self._action_start_recording_client.wait_for_server()
