@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'utils'
+package_name = 'scan_assembler'
 
 setup(
     name=package_name,
@@ -13,14 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='lc',
+    maintainer='phabrzyk',
     maintainer_email='phabrzyk@autnomous-systems.pl',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'laser_projector = utils.laser_projector:main'
+            'scan_assembler_node = scan_assembler.scan_assembler_node:main'
         ],
     },
 )

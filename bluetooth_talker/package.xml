@@ -1,16 +1,14 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>utils</name>
+  <name>bluetooth_talker</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="pawelhabrzyk@gmail.com">lc</maintainer>
+  <maintainer email="pawelhabrzyk@gmail.com">phabrzyk</maintainer>
   <license>TODO: License declaration</license>
 
-  <depend>sensor_msgs</depend>
-  <depend>laser_geometry</depend>
-  <depend>math</depend>
   <depend>rclpy</depend>
+  <depend>lc_interfaces</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
