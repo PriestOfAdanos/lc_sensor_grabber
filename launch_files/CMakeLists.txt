@@ -7,13 +7,11 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(octomap_server REQUIRED)
-find_package(engine_controller REQUIRED)
-find_package(rplidar_ros2 REQUIRED)
-find_package(scan_to_pointcloud2 REQUIRED)
-find_package(top_to_lidar_tf_static_publisher REQUIRED)
-find_package(scan_assembler REQUIRED)
-find_package(bluetooth_talker REQUIRED)
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
