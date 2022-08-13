@@ -3,9 +3,9 @@
 <package format="3">
   <name>launch_files</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Launch files for the scanner project</description>
   <maintainer email="pawelhabrzyk@gmail.com">phabrzyk</maintainer>
-  <license>TODO: License declaration</license>
+  <license>proprietary</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
