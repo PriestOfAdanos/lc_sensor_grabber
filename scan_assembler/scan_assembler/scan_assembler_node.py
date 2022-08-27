@@ -25,7 +25,7 @@ class ScanAssembler(Node):
             self.get_logger().info("service not available, waiting again...")
         self.req = MakeStep.Request()
 
-    def send_request(self, a, b):
+    def send_request(self):
         self.future = self.make_step_client.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()
@@ -40,6 +40,7 @@ class ScanAssembler(Node):
         feedback_msg.percentage_done = 0
 
         for i in range(242):
+            self.send_request()
             feedback_msg.percentage_done = 100*i//240
             self.get_logger().info("Feedback: {0}".format(feedback_msg.percentage_done))
             goal_handle.publish_feedback(feedback_msg)
