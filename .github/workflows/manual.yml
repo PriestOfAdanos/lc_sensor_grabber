@@ -1,4 +1,7 @@
+name: Docker build trigger
+
 on: [push]
+
 jobs:
   dispatch:
     runs-on: ubuntu-latest
