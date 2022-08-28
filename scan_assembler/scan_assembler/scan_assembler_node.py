@@ -13,6 +13,7 @@ from rclpy.node import Node
 class ScanAssembler(Node):
     """Node that controlls pace of scaning and puts individual scans together."""
     def __init__(self):
+        self._is_recording = False
         super().__init__("start_scan_action_server")
         self._start_scan_action_server = ActionServer(
             self,
@@ -30,12 +31,22 @@ class ScanAssembler(Node):
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()
 
+    def is_recording(self):
+        return self._is_recording
+
+    def set_recording_on(self):
+        if self.is_recording():
+            self._is_recording = True
+            
+    def set_recording_off(self):
+        if self.is_recording():
+            self._is_recording = False
+
+    # TODO(PriestOfAdanos): add error raising to above functions
 
     def start_scan_callback(self, goal_handle):
         self.get_logger().info("Executing goal...")
-
         recording_process = self.start_recording()
-
         feedback_msg = StartScan.Feedback()
         feedback_msg.percentage_done = 0
 
@@ -55,9 +66,11 @@ class ScanAssembler(Node):
     
     def start_recording(self):
         # TODO: random need to be replaced with configurable name
+        self.set_recording_on()
         return subprocess.Popen(["ros2", "bag", "record", "-a", "-o", f"/bags/{random.randint(0,1000000)}.bag"])
     
     def stop_recording(self, process):
+        self.set_recording_off()
         process.send_signal(signal.SIGINT)
         # for whatever reason You need this
     
