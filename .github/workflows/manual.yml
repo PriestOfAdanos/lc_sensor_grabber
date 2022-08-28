@@ -3,13 +3,9 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
+    - name: Invoke workflow in lc main repo
+      uses: benc-uk/workflow-dispatch@v1
       with:
-        github-token:  ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: 'PriestOfAdanos',
-            repo: 'lc',
-            workflow_id: 'docker-image.yml',
-            ref: 'master'
-          })
+        workflow: Docker Image CI
+        repo: PriestOfAdanos/lc
+        token: ${{ secrets.PERSONAL_TOKEN }}
