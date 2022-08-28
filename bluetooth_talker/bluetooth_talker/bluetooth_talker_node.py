@@ -55,8 +55,9 @@ def main(args=None):
     bluetooth_talker = BluetoothTalker()
     bd = BlueDot()
     try:
-        if bd.wait_for_press():
-            bluetooth_talker.start_recording()
+        while True:
+            if bd.is_pressed:
+                bluetooth_talker.start_recording()
         rclpy.spin(bluetooth_talker)
     except KeyboardInterrupt:
         pass
