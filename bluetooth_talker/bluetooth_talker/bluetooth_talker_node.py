@@ -22,7 +22,11 @@ class BluetoothTalker(Node):
     """Node that controlls pace of scaning and puts individual scans together."""
     def __init__(self):
         super().__init__('bluetooth_talker')
+        self.bd = BlueDot()
         self._action_start_recording_client = ActionClient(self, StartScan, 'start_scan_action_server')
+        while not self.bd.is_pressed:
+            pass
+        self.start_recording()
     
     def start_recording(self):
         goal_msg = StartScan.Goal()
@@ -53,11 +57,7 @@ class BluetoothTalker(Node):
 def main(args=None):
     rclpy.init(args=args)
     bluetooth_talker = BluetoothTalker()
-    bd = BlueDot()
     try:
-        while True:
-            if bd.is_pressed:
-                bluetooth_talker.start_recording()
         rclpy.spin(bluetooth_talker)
     except KeyboardInterrupt:
         pass
