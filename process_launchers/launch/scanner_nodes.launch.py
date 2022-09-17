@@ -19,13 +19,6 @@ def generate_launch_description():
             respawn=False
         ),
         Node(
-            package='scan_to_pointcloud2',
-            executable='scan_to_pointcloud2_node',
-            name='scan_to_pointcloud2_node',
-            output='both',
-            respawn=False
-        ),
-        Node(
             package='top_to_lidar_tf_static_publisher',
             executable='top_to_lidar_tf_static_publisher_node',
             name='top_to_lidar_tf_static_publisher_node',
