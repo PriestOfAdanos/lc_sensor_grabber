@@ -31,7 +31,7 @@ class TopToLidarTfStaticPublisher(Node):
       static_transformStamped = TransformStamped()
       static_transformStamped.header.stamp = self.get_clock().now().to_msg()
       static_transformStamped.header.frame_id = 'top'
-      static_transformStamped.child_frame_id = "lidar"
+      static_transformStamped.child_frame_id = "laser_frame"
 
       static_transformStamped.transform.translation.x = 14.2
       static_transformStamped.transform.translation.y = 0.0
