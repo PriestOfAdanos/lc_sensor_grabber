@@ -22,7 +22,7 @@ class ScanAssembler(Node):
             self.start_scan_callback)
         self.make_step_client = self.create_client(MakeStep, "make_step")
 
-        while not self.make_step_client.wait_for_service(timeout_sec=1.0):
+        while not self.make_step_client.wait_for_service(timeout_sec=1.0): # TODO(PriestOfAdanos): to config.yaml
             self.get_logger().info("service not available, waiting again...")
         self.req = MakeStep.Request()
 
@@ -50,9 +50,9 @@ class ScanAssembler(Node):
         feedback_msg = StartScan.Feedback()
         feedback_msg.percentage_done = 0
 
-        for i in range(242):
+        for i in range(242): # TODO(PriestOfAdanos): to config.yaml
             self.send_request()
-            feedback_msg.percentage_done = 100*i//240
+            feedback_msg.percentage_done = 100*i//240 # TODO(PriestOfAdanos): to config.yaml
             self.get_logger().info("Feedback: {0}".format(feedback_msg.percentage_done))
             goal_handle.publish_feedback(feedback_msg)
             time.sleep(1)

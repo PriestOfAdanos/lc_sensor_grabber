@@ -33,10 +33,10 @@ class TopToLidarTfStaticPublisher(Node):
       static_transformStamped.header.frame_id = 'top'
       static_transformStamped.child_frame_id = "laser_frame"
 
-      static_transformStamped.transform.translation.x = 0.142 # 
-      static_transformStamped.transform.translation.y = 0.0
-      static_transformStamped.transform.translation.z = 0.1
-      quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz')
+      static_transformStamped.transform.translation.x = 0.142 # TODO(PriestOfAdanos): to config.yaml
+      static_transformStamped.transform.translation.y = 0.0 # TODO(PriestOfAdanos): to config.yaml
+      static_transformStamped.transform.translation.z = 0.1 # TODO(PriestOfAdanos): to config.yaml
+      quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz') # TODO(PriestOfAdanos): to config.yaml
 
       static_transformStamped.transform.rotation.w = quat[0]
       static_transformStamped.transform.rotation.x = quat[1]
