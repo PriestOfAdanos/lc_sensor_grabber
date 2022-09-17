@@ -67,10 +67,10 @@ class EngineControllerNode(Node):
         t.transform.translation.z = 0.0
 
         q = tf_transformations.quaternion_from_euler(0, 0, math.radians(self.angle),axes='rxyz')
-        t.transform.rotation.x = q[0]
-        t.transform.rotation.y = q[1]
-        t.transform.rotation.z = q[2]
-        t.transform.rotation.w = q[3]
+        t.transform.rotation.w = q[0]
+        t.transform.rotation.x = q[1]
+        t.transform.rotation.y = q[2]
+        t.transform.rotation.z = q[3]
 
         self.tf_broadcaster.sendTransform(t)
         
