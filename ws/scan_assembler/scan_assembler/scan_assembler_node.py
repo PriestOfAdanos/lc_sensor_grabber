@@ -66,6 +66,7 @@ class ScanAssembler(Node):
     
     def start_recording(self):
         # TODO: random need to be replaced with configurable name
+        # TODO: since there are very few topics, python lib can be used instead
         self.set_recording_on()
         return subprocess.Popen(["ros2", "bag", "record", "-a", "-o", f"/bags/{random.randint(0,1000000)}.bag"])
     
