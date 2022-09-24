@@ -43,33 +43,18 @@ COPY . /opt/$USERNAME/src/ndt_omp/
 WORKDIR /opt/$USERNAME
 RUN /bin/bash -c '. /opt/ros/galactic/setup.bash; colcon build'
 
-
+FROM node:18 AS node_base 
 FROM  dep-install AS final
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
+USER $USERNAME
 
+COPY --from=node_base / /
 # get this to config file
-ENV NODE_VERSION=16.13.0
-
-ARG NODE_PACKAGE=node-v$NODE_VERSION-linux-x64
-ARG NODE_HOME=/opt/$NODE_PACKAGE
-
-ENV NODE_PATH $NODE_HOME/lib/node_modules
-ENV PATH $NODE_HOME/bin:$PATH
-
-RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC /opt/
-
-
-
-
-COPY --from=dep-compile /opt/$USERNAME/install /opt/$USERNAME/install
-
 WORKDIR /
-
 COPY lc_entrypoint_scripts/* /opt/$USERNAME/scripts/
 
-USER $USERNAME
 
 
 # ENTRYPOINT . /opt/lc/install/setup.bash && ros2  launch /opt/lc/launch_files/scanner_launch.py
