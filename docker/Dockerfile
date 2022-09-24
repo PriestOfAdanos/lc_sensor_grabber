@@ -52,6 +52,8 @@ ARG USER_GID
 USER $USERNAME
 
 COPY --from=node_base / /
+COPY --from=dep-compile /opt/$USERNAME/install /opt/$USERNAME
+
 # get this to config file
 WORKDIR /
 COPY lc_entrypoint_scripts/* /opt/$USERNAME/scripts/
