@@ -1,0 +1,2 @@
+Invoking command in '/home/phabrzyk/lc/lc_sensor_grabber/ws/build/lc_interfaces': /usr/bin/cmake /home/phabrzyk/lc/lc_sensor_grabber/ws/lc_interfaces -DCMAKE_INSTALL_PREFIX=/home/phabrzyk/lc/lc_sensor_grabber/ws/install/lc_interfaces
+Invoked command in '/home/phabrzyk/lc/lc_sensor_grabber/ws/build/lc_interfaces' returned '1': /usr/bin/cmake /home/phabrzyk/lc/lc_sensor_grabber/ws/lc_interfaces -DCMAKE_INSTALL_PREFIX=/home/phabrzyk/lc/lc_sensor_grabber/ws/install/lc_interfaces
