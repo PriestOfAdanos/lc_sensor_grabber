@@ -9,6 +9,7 @@ ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
   wget nano build-essential libomp-dev clang lld git\
   ros-galactic-tf2-tools ros-galactic-tf-transformations \
@@ -49,9 +50,13 @@ FROM  dep-install AS final
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
+
+
 USER $USERNAME
 
-COPY --from=node_base / /
+RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+RUN sudo bash /tmp/nodesource_setup.sh
+RUN sudo apt install nodejs
 COPY --from=dep-compile /opt/$USERNAME/install /opt/$USERNAME
 
 # get this to config file
