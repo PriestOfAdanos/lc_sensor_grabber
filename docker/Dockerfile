@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ros-galactic-geodesy ros-galactic-pcl-ros ros-galactic-nmea-msgs \
   ros-galactic-sensor-msgs \
   ros-galactic-sensor-msgs-py \
-  ros-galactic-octomap-mapping \
   python3-pip python3-dev python3-setuptools python3-wheel
 
 RUN pip3 install RPi.GPIO transforms3d bluedot
@@ -34,6 +33,7 @@ ARG USER_UID
 ARG USER_GID
 ARG BRANCH
 
+
 WORKDIR /opt/$USERNAME/src
 
 RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git -b $BRANCH
@@ -45,7 +45,6 @@ COPY . /opt/$USERNAME/src/ndt_omp/
 WORKDIR /opt/$USERNAME
 RUN /bin/bash -c '. /opt/ros/galactic/setup.bash; colcon build'
 
-FROM node:18 AS node_base 
 FROM  dep-install AS final
 ARG USERNAME
 ARG USER_UID
