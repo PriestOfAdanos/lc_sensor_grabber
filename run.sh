@@ -10,12 +10,13 @@ print_usage() {
   printf "Usage: 
   production mode: -p
   development mode: -d
-  docker tag: -t [tag]
+  docker tag: -t [tag] (default: master)
+  bags path: -b [path] (default: "$(pwd)"/bags)
 "
 }
 run_docker() {
-  printf "running ghcr.io/priestofadanos/lc:$tag... \n"
-  docker run -it --net=host --privileged --user=root  $forward_parameters \
+  printf "running ghcr.io/priestofadanos/lc_sensor_grabber:$tag... \n"
+  docker run -it --net=host --name=lc_sensor_grabber --privileged --user=root  $forward_parameters \
     --mount type=bind,source=$bags_folder,target=/bags  \
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
     --device=/dev/ttyUSB0 \

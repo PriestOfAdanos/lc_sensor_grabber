@@ -1,6 +1,7 @@
 ARG USERNAME=lc
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG BRANCH
 
 
 FROM ghcr.io/priestofadanos/ros:galactic AS dep-install
@@ -34,7 +35,7 @@ ARG USER_GID
 WORKDIR /opt/$USERNAME/src
 
 
-RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git
+RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git -b $BRANCH
 RUN git clone https://github.com/Slamtec/rplidar_ros.git -b ros2 
 RUN git clone https://github.com/ros-perception/laser_geometry.git -b ros2
 
