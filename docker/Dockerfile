@@ -31,9 +31,9 @@ FROM dep-install as dep-compile
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
+ARG BRANCH
 
 WORKDIR /opt/$USERNAME/src
-
 
 RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git -b $BRANCH
 RUN git clone https://github.com/Slamtec/rplidar_ros.git -b ros2 
