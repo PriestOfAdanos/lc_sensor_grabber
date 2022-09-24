@@ -35,7 +35,7 @@ if [ "$print_help" = true ] ;
   then
       print_usage
   else
-      run_docker
+      build_docker
 fi
 
 
