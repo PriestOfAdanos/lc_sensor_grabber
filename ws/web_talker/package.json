@@ -12,6 +12,7 @@
     "generate-ros-messages": "node_modules/.bin/generate-ros-messages"
   },
   "dependencies": {
-    "rclnodejs": "^0.21.3"
+    "rclnodejs": "^0.21.3",
+    "vue": "^3.2.39"
   }
 }
