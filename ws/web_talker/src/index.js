@@ -1,5 +1,6 @@
 const rclnodejs = require('rclnodejs');
-
+const http = require('http')
+const fs = require('fs')
 // Create a node that publishes a msg to the topic 'foo' every 1 second.
 // View the topic from the ros2 commandline as shown below:
 //    ros2 topic echo foo std_msgs/msg/String
@@ -29,3 +30,9 @@ async function example() {
 }()).catch(() => {
   process.exitCode = 1;
 });
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'content-type': 'text/html' })
+  fs.createReadStream('/home/lc/ws/web_talker/src/index.html').pipe(res)
+})
+server.listen(process.env.PORT || 3000)
