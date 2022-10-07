@@ -50,9 +50,9 @@ ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 
 USER $USERNAME
-
 RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
 RUN sudo bash /tmp/nodesource_setup.sh
 RUN sudo apt install nodejs
