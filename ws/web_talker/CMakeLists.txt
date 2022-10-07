@@ -5,20 +5,34 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
+set(JS_PACKAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend_dist") 
+set(JS_RAW_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/frontend")
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+
+# TODO(PriestOfAdanos): add npm install to be done inside isntall folder, and the same for browserify
+# fs.createReadStream('/home/lc/ws/web_talker/src/index.html').pipe(res) TODO(PriestOfAdanos): Needs to be included in build script
+
+
+file(GLOB list_of_js_frontend_files 
+    "${JS_RAW_DIR}/*.js"
+)
+foreach(FILE ${list_of_js_frontend_files})
+get_filename_component(filename ${FILE} NAME)
+
+add_custom_command(
+  OUTPUT  ${JS_PACKAGED_DIR}/${filename}
+  DEPENDS ${JS_RAW_DIR}/${filename}
+  COMMAND browserify ${JS_RAW_DIR}/${filename} >  ${JS_PACKAGED_DIR}/${filename}
+  )
+  list(APPEND DOC_RESULTS ${JS_PACKAGED_DIR}/${filename})
+endforeach()
+message(WARNING ${CMAKE_CURRENT_SOURCE_DIR})
+add_custom_target(JS_COMPILED ALL
+  DEPENDS ${DOC_RESULTS}
+  )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
