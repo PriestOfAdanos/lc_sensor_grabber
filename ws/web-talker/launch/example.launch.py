@@ -12,7 +12,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    share_directory = get_package_share_directory('web_talker')
+    share_directory = get_package_share_directory('web-talker')
 
 	# revise path to your nodejs start file
     start_js_file = os.path.join(
