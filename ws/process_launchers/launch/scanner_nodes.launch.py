@@ -1,5 +1,10 @@
 from launch import LaunchDescription, actions
 from launch_ros.actions import Node
+from launch.launch_description_sources import FrontendLaunchDescriptionSource
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
+from ament_index_python import get_package_share_directory
+import os
 
 
 def generate_launch_description():
@@ -11,13 +16,13 @@ def generate_launch_description():
             output='both',
             respawn=False
         ),
-        Node(
-            package='rplidar_ros2',
-            executable='rplidar_scan_publisher',
-            name='rplidar_scan_publisher',
-            output='both',
-            respawn=False
-        ),
+        # Node(
+        #     package='rplidar_ros2',
+        #     executable='rplidar_scan_publisher',
+        #     name='rplidar_scan_publisher',
+        #     output='both',
+        #     respawn=False
+        # ),
         Node(
             package='top_to_lidar_tf_static_publisher',
             executable='top_to_lidar_tf_static_publisher_node',
@@ -32,11 +37,12 @@ def generate_launch_description():
             output='both',
             respawn=False
         ),
-        Node(
-            package='bluetooth_talker',
-            executable='bluetooth_talker_node',
-            name='bluetooth_talker_node',
-            output='both',
-            respawn=True,
-        ),
+        actions.IncludeLaunchDescription(
+            FrontendLaunchDescriptionSource(
+                os.path.join(
+                    get_package_share_directory('rosbridge_server'),
+                    'launch/rosbridge_websocket_launch.xml'
+                ),
+            )
+        )
     ])

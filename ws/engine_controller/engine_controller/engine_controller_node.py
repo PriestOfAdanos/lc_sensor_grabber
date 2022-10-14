@@ -27,7 +27,7 @@ class EngineControllerNode(Node):
 
         # 360/242 which is full circle divided by steps required 
         # to make one, thus this is, in degrees, change of one step
-        self.step_angle = 1.4835 # TODO(PriestOfAdanos): to config.yaml
+        self.step_angle = 360/242 # TODO(PriestOfAdanos): to config.yaml
 
         self.make_step = self.create_service(MakeStep, 'make_step', self.make_step_callback)
         self.set_step_angle = self.create_service(SetStepAngle, 'set_step_angle', self.set_step_angle_callback)

@@ -1,34 +1,71 @@
 import random 
 import signal
+import string
 import subprocess
 import time
+from functools import partial
 
 import rclpy
-from lc_interfaces.action import StartScan
-from lc_interfaces.srv import MakeStep
-from rclpy.action import ActionServer
+from lc_interfaces.srv import MakeStep, MakeScan
+from sensor_msgs.msg import LaserScan
+from tf2_msgs.msg import TFMessage
 from rclpy.node import Node
+from rclpy.serialization import serialize_message
+
+
+import rosbag2_py
 
 
 class ScanAssembler(Node):
     """Node that controlls pace of scaning and puts individual scans together."""
     def __init__(self):
         self._is_recording = False
-        super().__init__("start_scan_action_server")
-        self._start_scan_action_server = ActionServer(
-            self,
-            StartScan,
-            "start_scan",
-            self.start_scan_callback)
+        super().__init__("scan_assembler_node")
+        #TODO(PriestOfAdanos): move to config
+        #{
+        self.topic_infos = {}
+        self.topic_subscriptions = {}
+        self.topic_name_type_dict = {}
+        self.make_clockwise_step=True
+        self.topic_name_type_dict['scan']= ['sensor_msgs/msg/LaserScan', LaserScan]
+        self.topic_name_type_dict['tf']= ['tf2_msgs/msg/TFMessage', TFMessage]
+        self.topic_name_type_dict['tf_static']= ['tf2_msgs/msg/TFMessage', TFMessage]
+        # }
         self.make_step_client = self.create_client(MakeStep, "make_step")
+        self.srv = self.create_service(MakeScan, 'make_scan', self.make_scan_callback)
+        self.writer = rosbag2_py.SequentialWriter()
 
-        while not self.make_step_client.wait_for_service(timeout_sec=1.0): # TODO(PriestOfAdanos): to config.yaml
-            self.get_logger().info("service not available, waiting again...")
-        self.req = MakeStep.Request()
+        storage_options = rosbag2_py._storage.StorageOptions(
+            uri='my_bag', #TODO(PriestOfAdanos): move to config
+            storage_id='sqlite3')
+        converter_options = rosbag2_py._storage.ConverterOptions('', '')
+        self.writer.open(storage_options, converter_options)
+       
+        
+        for topic, topic_type in self.topic_name_type_dict.items():
+            self.topic_infos[topic] = rosbag2_py._storage.TopicMetadata(
+                name=topic,
+                type=topic_type[0],
+                serialization_format='cdr')
+            
+            self.topic_subscriptions[topic] = self.create_subscription(
+                topic_type[1],
+                topic,
+                partial(self.topic_callback, topic_name=topic),
+                10) 
+            self.writer.create_topic(self.topic_infos[topic])
+        
+    def topic_callback(self, msg, topic_name):
+        self.writer.write(
+            topic_name,
+            serialize_message(msg),
+            self.get_clock().now().nanoseconds)
+
 
     def send_request(self):
-        self.future = self.make_step_client.call_async(self.req)
+        self.future = self.make_step_client.call_async(MakeStep.Request())
         rclpy.spin_until_future_complete(self, self.future)
+        self.get_logger().info("make_step requested")
         return self.future.result()
 
     def is_recording(self):
@@ -44,42 +81,15 @@ class ScanAssembler(Node):
 
     # TODO(PriestOfAdanos): add error raising to above functions
 
-    def start_scan_callback(self, goal_handle):
-        self.get_logger().info("Executing goal...")
-        recording_process = self.start_recording()
-        feedback_msg = StartScan.Feedback()
-        feedback_msg.percentage_done = 0
-
-        for i in range(242): # TODO(PriestOfAdanos): to config.yaml
-            self.send_request()
-            feedback_msg.percentage_done = 100*i//240 # TODO(PriestOfAdanos): to config.yaml
-            self.get_logger().info("Feedback: {0}".format(feedback_msg.percentage_done))
-            goal_handle.publish_feedback(feedback_msg)
-            time.sleep(1)
-
-        goal_handle.succeed()
-
-        result = StartScan.Result()
-        result.message = "Done!"
-        self.stop_recording(recording_process)
-        return result
-    
-    def start_recording(self):
-        # TODO: random need to be replaced with configurable name
-        # TODO: since there are very few topics, python lib can be used instead
+    def make_scan_callback(self, req, res):
         self.set_recording_on()
-        return subprocess.Popen(["ros2", "bag", "record", "-a", "-o", f"/bags/{random.randint(0,1000000)}.bag"])
-    
-    def stop_recording(self, process):
-        self.set_recording_off()
-        process.send_signal(signal.SIGINT)
-        # for whatever reason You need this
-    
-    def make_step(self):
-        return subprocess.Popen(["ros2", "service", "call", "/make_step", "lc_interfaces/srv/MakeStep", "'{make_clockwise_step: True}'"])
-        
+        self.get_logger().info("started to make steps")
 
-
+        for _ in range(242): # TODO(PriestOfAdanos): move to config
+            self.send_request()
+        res.message = "Skan zakończony"
+        return res
+    
 def main(args=None):
     rclpy.init(args=args)
 
