@@ -15,7 +15,7 @@ from rclpy.serialization import serialize_message
 
 import rosbag2_py
 
-
+### TODo(PriestOfAdanos): Split into separate classes (single responsibility)
 class ScanAssembler(Node):
     """Node that controlls pace of scaning and puts individual scans together."""
     def __init__(self):
@@ -41,7 +41,8 @@ class ScanAssembler(Node):
         converter_options = rosbag2_py._storage.ConverterOptions('', '')
         self.writer.open(storage_options, converter_options)
        
-        
+    def start_recording(self):
+        self.set_recording_on()
         for topic, topic_type in self.topic_name_type_dict.items():
             self.topic_infos[topic] = rosbag2_py._storage.TopicMetadata(
                 name=topic,
@@ -78,15 +79,19 @@ class ScanAssembler(Node):
     def set_recording_off(self):
         if self.is_recording():
             self._is_recording = False
-
+            
+    def stop_recording(self):
+        del self.writer
+        self.set_recording_off()
     # TODO(PriestOfAdanos): add error raising to above functions
 
     def make_scan_callback(self, req, res):
-        self.set_recording_on()
+        self.start_recording()
         self.get_logger().info("started to make steps")
 
         for _ in range(242): # TODO(PriestOfAdanos): move to config
             self.send_request()
+        self.stop_recording()
         res.message = "Skan zakończony"
         return res
     
