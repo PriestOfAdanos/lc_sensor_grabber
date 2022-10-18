@@ -13,8 +13,9 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MakeStep.srv"
+  "srv/MakeScan.srv"
   "srv/SetStepAngle.srv"
-  "action/StartScan.action"
+  "msg/PercentageDone.msg"
   DEPENDENCIES sensor_msgs std_msgs geometry_msgs
 )
 
