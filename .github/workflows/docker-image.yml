@@ -7,7 +7,9 @@ on:
     branches: [master]
   workflow_dispatch:
   
-
+env:
+  GITHUB_REPOSITORY_FULL_NAME: ${{ github.repository }}
+  
 jobs:
   build:
     permissions:
@@ -54,4 +56,4 @@ jobs:
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
           build-args: |
-            BRANCH=${${{ github.repository }}#*/ }
+            BRANCH=${$GITHUB_REPOSITORY_FULL_NAME#*/ }
