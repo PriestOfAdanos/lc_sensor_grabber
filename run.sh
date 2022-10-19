@@ -21,13 +21,12 @@ run_docker() {
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
     --device=/dev/ttyUSB0 \
     ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash \
-    $trailing_parameters
 }
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
-    p) trailing_parameters="--device=/dev/ttyUSB0"
-       forward_parameters=""
+    p) trailing_parameters=""
+       forward_parameters="--device=/dev/ttyUSB0"
        print_help=false
     ;;
     d) trailing_parameters=""
