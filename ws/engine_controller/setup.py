@@ -15,8 +15,8 @@ setup(
     zip_safe=True,
     maintainer='phabrzyk',
     maintainer_email='phabrzyk@autnomous-systems.pl',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='ros package to send current to correct pins to control stepper motor',
+    license='Proprietary',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
