@@ -57,5 +57,5 @@ jobs:
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
           build-args:
-            BRANCH=${TF_VAR_instance_label}
+            BRANCH=${{ TF_VAR_instance_label }}
 
