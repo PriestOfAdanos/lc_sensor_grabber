@@ -6,7 +6,8 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-
+  
+  
 jobs:
   build:
     permissions:
@@ -52,3 +53,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
+          build-args:
+            BRANCH=${{ github.event.pull_request.head.ref }}
+
