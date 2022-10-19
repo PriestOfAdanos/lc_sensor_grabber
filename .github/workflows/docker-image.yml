@@ -7,6 +7,10 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  GITHUB_REF_NAME: ${{ github.GITHUB_REF_NAME }}
+
+
 jobs:
   build:
     permissions:
