@@ -3,9 +3,9 @@
 <package format="3">
   <name>engine_controller</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>ros package to send current to correct pins to control stepper motor</description>
   <maintainer email="phabrzyk@autnomous-systems.pl">phabrzyk</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Proprietary</license>
 
   <depend>rclpy</depend>
   <depend>lc_interfaces</depend>
