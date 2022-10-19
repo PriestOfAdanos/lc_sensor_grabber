@@ -56,4 +56,4 @@ jobs:
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
           build-args: |
-            BRANCH=${$GITHUB_REPOSITORY_FULL_NAME#*/ }
+            BRANCH=${GITHUB_REPOSITORY_FULL_NAME#*/}
