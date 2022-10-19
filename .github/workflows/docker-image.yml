@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 env:
-  BRANCH: ${{${{ github.ref_name }}#*/}}
+  BRANCH: ${{$github.ref_name#*/}}
   
 jobs:
   build:
