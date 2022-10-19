@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 env:
-  BRANCH: ${{ format('{0}{1}', github.event.pull_request.head.ref, github.event.push.ref) }}
+  BRANCH: ${{ format('{0}{1}', github.event.pull_request.head.ref, github.event.push) }}
   
 jobs:
   build:
