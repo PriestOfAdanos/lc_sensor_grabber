@@ -55,5 +55,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
-          build-args: |
+          build-args:
             BRANCH=${GITHUB_REPOSITORY_FULL_NAME#*/}
+            BRANC2H=${GITHUB_REPOSITORY_FULL_NAME#*/}
