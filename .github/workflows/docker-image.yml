@@ -9,6 +9,7 @@ on:
   
 env:
   GITHUB_REPOSITORY_FULL_NAME: ${{ github.ref_name }}
+  BRANCH: ${{env.GITHUB_REPOSITORY_FULL_NAME#*/}}
   
 jobs:
   build:
@@ -56,5 +57,5 @@ jobs:
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
           build-args:
-            BRANCH=${GITHUB_REPOSITORY_FULL_NAME#*/}
-            BRANC2H=${GITHUB_REPOSITORY_FULL_NAME#*/}
+            BRANCH=${{env.BRANCH}}
+
