@@ -19,10 +19,10 @@ run_docker() {
   docker run -it --rm --net=host --name=lc_sensor_grabber --privileged --user=root  $forward_parameters \
     --mount type=bind,source=$bags_folder,target=/bags  \
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
-    --device=/dev/ttyUSB0 \
     -p 9090:80 \
-    ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash \
+    ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash
 }
+
 
 #  TODO(PriestOfAdanos): move to parameter
 
@@ -35,7 +35,6 @@ while getopts "pdt:b:" flag; do
     d) trailing_parameters=""
        forward_parameters="--mount type=bind,source="$(pwd)"/ws,target=/home/lc/ws"
        print_help=false
-
     ;;
     t) tag="${OPTARG}" 
        print_help=false
@@ -56,5 +55,3 @@ if [ "$print_help" = true ] ;
   else
       run_docker
 fi
-
-
