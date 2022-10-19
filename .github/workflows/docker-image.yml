@@ -6,9 +6,7 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-  
-env:
-  BRANCH: ${{ format('{0}{1}', github.event.pull_request.head.ref, github.event.push) }}
+
   
 jobs:
   build:
@@ -21,6 +19,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v6
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -56,5 +57,5 @@ jobs:
           tags: ${{ steps.lc.outputs.tags }}
           labels: ${{ steps.lc.outputs.labels }}
           build-args:
-            BRANCH=${{ env.BRANCH }}
+            BRANCH=${{ steps.branch-name.outputs.current_branch }}
 
