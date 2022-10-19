@@ -20,9 +20,11 @@ run_docker() {
     --mount type=bind,source=$bags_folder,target=/bags  \
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
     --device=/dev/ttyUSB0 \
-    -p 8080:80 \ # TODO(PriestOfAdanos): move to parameter
+    -p 8080:80 \
     ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash \
 }
+
+#  TODO(PriestOfAdanos): move to parameter
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
