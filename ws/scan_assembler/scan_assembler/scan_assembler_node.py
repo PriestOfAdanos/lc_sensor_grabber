@@ -13,6 +13,7 @@ from rclpy.node import Node
 from rclpy.serialization import serialize_message
 from sensor_msgs.msg import LaserScan
 from tf2_msgs.msg import TFMessage
+from rclpy.parameter import Parameter
 
 
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
@@ -21,15 +22,15 @@ class ScanAssembler(Node):
 
     def __init__(self):
         super().__init__("scan_assembler_node")
-        self._is_recording = False
         
-        self.declare_parameter('steps_to_full_circle')
-        self.declare_parameter('make_clockwise_steps')
-        self.declare_parameter('bags_path')
-        self.declare_parameter('topics_to_subscribe')
+        self.declare_parameter('steps_to_full_circle', Parameter.Type.INTEGER)
+        self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
+        self.declare_parameter('bags_path', Parameter.Type.STRING)
+        self.declare_parameter('topics_to_subscribe', Parameter.Type.STRING_ARRAY)
         self.declare_parameter('bag_name', value = 'scan')
             
         datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
+        self._is_recording = False
 
         self.steps_to_full_circle = self.get_parameter('steps_to_full_circle')
         self.make_clockwise_steps = self.get_parameter('make_clockwise_steps')
