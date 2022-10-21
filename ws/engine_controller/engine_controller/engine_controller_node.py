@@ -85,8 +85,11 @@ def main(args=None):
     rclpy.init(args=args)
 
     engine_controller_node = EngineControllerNode()
-
-    rclpy.spin(engine_controller_node)
+    
+    try:
+        rclpy.spin(engine_controller_node)
+    except KeyboardInterrupt:
+        pass
 
     engine_controller_node.destroy_node()
     rclpy.shutdown()
