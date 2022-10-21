@@ -101,7 +101,7 @@ class ScanAssembler(Node):
         self.start_recording()
         self.get_logger().info("started to make steps")
 
-        for _ in range(242):  # TODO(PriestOfAdanos): move to config
+        for _ in range(self.steps_to_full_circle):
             self.send_request()
         self.stop_recording()
         res.message = "Skan zakończony"
