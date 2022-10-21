@@ -9,24 +9,27 @@ from launch.launch_description_sources import FrontendLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
-    scan_assembler_config = os.path.join(
-        get_package_share_directory('scan_assembler'),
+    config = os.path.join(
+        get_package_share_directory('process_launchers'),
         'config',
-        'scan_assembler_config.yml'
+        'config.yml'
     )
+
     return LaunchDescription([
         Node(
             package='engine_controller',
             executable='engine_controller_node',
             name='engine_controller_node',
             output='both',
+            parameters=[config],
             respawn=False
         ),
         Node(
             package='rplidar_ros2',
             executable='rplidar_scan_publisher',
             name='rplidar_scan_publisher',
-            output='both',
+            output='both',            
+            parameters=[config],
             respawn=False
         ),
         Node(
@@ -34,6 +37,7 @@ def generate_launch_description():
             executable='top_to_lidar_tf_static_publisher_node',
             name='top_to_lidar_tf_static_publisher_node',
             output='both',
+            parameters=[config],
             respawn=False
         ),
         Node(
@@ -41,7 +45,7 @@ def generate_launch_description():
             executable='scan_assembler_node',
             name='scan_assembler_node',
             output='both',
-            parameters=[scan_assembler_config],
+            parameters=[config],
             respawn=False
         ),
         actions.IncludeLaunchDescription(
