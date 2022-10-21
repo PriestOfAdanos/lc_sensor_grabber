@@ -63,6 +63,7 @@ COPY --from=dep-compile /opt/$USERNAME/install /opt/$USERNAME
 WORKDIR /
 COPY lc_entrypoint_scripts/* /opt/$USERNAME/scripts/
 
+COPY ./ros_entrypoint.sh /
 
 
-# ENTRYPOINT . /opt/lc/install/setup.bash && ros2  launch /opt/lc/launch_files/scanner_launch.py
+ENTRYPOINT ["/ros_entrypoint.sh"]

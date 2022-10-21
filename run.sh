@@ -1,7 +1,7 @@
 #! /bin/sh
 
 forward_parameters="--mount type=bind,source="$(pwd)"/ws,target=/home/lc/ws"
-trailing_parameters=""
+trailing_parameters="bash"
 bags_folder="$(pwd)"/bags
 tag="master"
 print_help=true
@@ -19,18 +19,18 @@ run_docker() {
   docker run -it --rm --net=host --name=lc_sensor_grabber --privileged --user=root  $forward_parameters \
     --mount type=bind,source=$bags_folder,target=/bags  \
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
-    ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash
+    ghcr.io/priestofadanos/lc_sensor_grabber:$tag $trailing_parameters
+
 }
 
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
-    p) trailing_parameters=""
+    p) trailing_parameters="ros2 launch process_launchers scanner_nodes.launch.py"
        forward_parameters="--device=/dev/ttyUSB0"
        print_help=false
     ;;
-    d) trailing_parameters=""
-       forward_parameters="--mount type=bind,source="$(pwd)"/ws,target=/home/lc/ws"
+    d) forward_parameters="--mount type=bind,source="$(pwd)"/ws,target=/home/lc/ws"
        print_help=false
     ;;
     t) tag="${OPTARG}" 
