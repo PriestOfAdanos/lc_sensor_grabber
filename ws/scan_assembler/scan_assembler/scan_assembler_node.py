@@ -1,8 +1,3 @@
-import random
-import signal
-import string
-import subprocess
-import time
 from datetime import datetime
 from functools import partial
 
@@ -11,8 +6,6 @@ import rosbag2_py
 from lc_interfaces.srv import MakeScan, MakeStep
 from rclpy.node import Node
 from rclpy.serialization import serialize_message
-from sensor_msgs.msg import LaserScan
-from tf2_msgs.msg import TFMessage
 from rclpy.parameter import Parameter
 
 
@@ -22,6 +15,10 @@ class ScanAssembler(Node):
 
     def __init__(self):
         super().__init__("scan_assembler_node")
+        self.topic_subscriptions = {}
+        self.topic_storage_metadata_infos = {}
+        self._is_recording = False
+        datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
         
         self.declare_parameter('steps_to_full_circle', Parameter.Type.INTEGER)
         self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
@@ -29,18 +26,11 @@ class ScanAssembler(Node):
         self.declare_parameter('topics_to_subscribe', Parameter.Type.STRING_ARRAY)
         self.declare_parameter('bag_name', value = 'scan')
             
-        datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
-        self._is_recording = False
-
-        self.steps_to_full_circle = self.get_parameter('steps_to_full_circle')
-        self.make_clockwise_steps = self.get_parameter('make_clockwise_steps')
-        self.bags_path = self.get_parameter('bags_path')
-        self.topics_to_subscribe = self.get_parameter('topics_to_subscribe')
-        self.bag_name = self.get_parameter('bag_name')
-
-        self.topic_subscriptions = {}
-        self.topic_storage_metadata_infos = {}
-        self.topic_name_type_dict = {}
+        self.steps_to_full_circle = self.get_parameter('steps_to_full_circle').value
+        self.make_clockwise_steps = self.get_parameter('make_clockwise_steps').value
+        self.bags_path = self.get_parameter('bags_path').value
+        self.topics_to_subscribe = self.get_parameter('topics_to_subscribe').value
+        self.bag_name = self.get_parameter('bag_name').value
 
         self.make_step_client = self.create_client(MakeStep, "make_step")
         self.srv = self.create_service(
@@ -48,7 +38,7 @@ class ScanAssembler(Node):
         self.writer = rosbag2_py.SequentialWriter()
 
         storage_options = rosbag2_py._storage.StorageOptions(
-            uri=f"{self.bags_path.value}/{self.bag_name.value}-{datetime_now}",
+            uri=f"{self.bags_path}/{self.bag_name}-{datetime_now}",
             storage_id='sqlite3')
         converter_options = rosbag2_py._storage.ConverterOptions('', '')
         self.writer.open(storage_options, converter_options)
@@ -56,8 +46,9 @@ class ScanAssembler(Node):
     def start_recording(self):
         self.set_recording_on()
         self.topic_name_type_dict = dict(self.get_topic_names_and_types())
-        for topic, topic_type in self.topic_name_type_dict.items():
-            self.topic_infos[topic] = rosbag2_py._storage.TopicMetadata(
+        for topic in self.topics_to_subscribe:
+            topic_type = self.topic_name_type_dict[topic]
+            self.topic_storage_metadata_infos[topic] = rosbag2_py._storage.TopicMetadata(
                 name=topic,
                 type=topic_type[0],
                 serialization_format='cdr')
@@ -67,7 +58,7 @@ class ScanAssembler(Node):
                 topic,
                 partial(self.topic_callback, topic_name=topic),
                 10)
-            self.writer.create_topic(self.topic_infos[topic])
+            self.writer.create_topic(self.topic_storage_metadata_infos[topic])
 
     def topic_callback(self, msg, topic_name):
         self.writer.write(

@@ -24,3 +24,14 @@ scan_assembler_node:
       - 'tf2_msgs/msg/TFMessage'
       - 'tf2_msgs/msg/TFMessage'
     <<: *commons
+
+static_tf_broadcaster: 
+  ros__parameters:
+    parent_frame_id: 'top'
+    child_frame_id: 'laser_frame'
+    translationXYZ: 
+      - 0.142
+      - 0.0
+      - 0.1
+
+    
