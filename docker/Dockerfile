@@ -66,4 +66,4 @@ COPY lc_entrypoint_scripts/* /opt/$USERNAME/scripts/
 COPY ./ros_entrypoint.sh /
 
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+# ENTRYPOINT ["/ros_entrypoint.sh"]
