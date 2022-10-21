@@ -1,6 +1,8 @@
+commons: &commons
+  steps_to_full_circle: 240
+
 engine_controller_node:
   ros__parameters:
-    steps_to_full_circle: 240 # TODO(PriestOfAdanos): move to common_config.yml
     direction_pin: 20
     step_pin: 21
     prod_mode: True
@@ -11,13 +13,14 @@ engine_controller_node:
       - 0.0
       - 0.0
       - 0.0
-      
+    <<: *commons
+
 scan_assembler_node:
   ros__parameters:
-    steps_to_full_circle: 240
     make_clockwise_steps: True
     bags_path: '/bags'
     topics_to_subscribe:
       - 'sensor_msgs/msg/LaserScan'
       - 'tf2_msgs/msg/TFMessage'
       - 'tf2_msgs/msg/TFMessage'
+    <<: *commons
