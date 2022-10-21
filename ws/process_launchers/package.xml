@@ -4,7 +4,7 @@
   <name>process_launchers</name>
   <version>0.0.0</version>
   <description>Home of launch files for the project</description>
-  <maintainer email="pawelhabrzyk@gmail.com">root</maintainer>
+  <maintainer email="pawelhabrzyk@gmail.com">Paweł Habrzyk</maintainer>
   <license>Proprietary</license>
 
   <depend>engine_controller</depend>

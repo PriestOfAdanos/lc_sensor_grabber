@@ -13,7 +13,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='lc',
+    maintainer='Paweł Habrzyk',
     maintainer_email='pawelhabrzyk@gmail.com',
     description='Publish transformation between base and lidar',
     license='PROPRIETARY',
