@@ -1,6 +1,0 @@
-{
-    "python.formatting.provider": "black",
-    "yaml.schemas": {
-        "https://gitlab.com/appsemble/appsemble/-/raw/HEAD/packages/cli/assets/appsemblerc.schema.json": "file:///home/phabrzyk/lc/lc_sensor_grabber/ws/scan_assembler/config/config.yaml"
-    }
-}
