@@ -25,7 +25,7 @@ run_docker() {
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
-    p) trailing_parameters=""
+    p) trailing_parameters="ros2 launch process_launchers scanner_nodes.launch.py"
        forward_parameters="--device=/dev/ttyUSB0"
        print_help=false
     ;;
