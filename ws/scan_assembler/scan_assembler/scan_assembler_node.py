@@ -101,17 +101,13 @@ class ScanAssembler(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
     scan_assembler_node = ScanAssembler()
-
     try:
         rclpy.spin(scan_assembler_node)
     except KeyboardInterrupt:
         pass # TODO(PriestOfAdanos): add such safety to all nodes
-
     scan_assembler_node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == "__main__":
     main()
