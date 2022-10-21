@@ -3,10 +3,9 @@
 <package format="3">
   <name>scan_assembler</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Main node, sends requests to other nodes to create a scan</description>
   <maintainer email="pawelhabrzyk@gmail.com">Paweł Habrzyk</maintainer>
-  <license>TODO: License declaration</license>
-
+  <license>Proprietary</license>
   <depend>rclpy</depend>
   <depend>lc_interfaces</depend>
 

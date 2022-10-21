@@ -19,12 +19,9 @@ run_docker() {
   docker run -it --rm --net=host --name=lc_sensor_grabber --privileged --user=root  $forward_parameters \
     --mount type=bind,source=$bags_folder,target=/bags  \
     --mount type=bind,source=/var/run/dbus/system_bus_socket,target=/var/run/dbus/system_bus_socket \
-    -p 9090:80 \
     ghcr.io/priestofadanos/lc_sensor_grabber:$tag bash
 }
 
-
-#  TODO(PriestOfAdanos): move to parameter
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
