@@ -13,14 +13,13 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'config'), glob('config/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='phabrzyk',
-    maintainer_email='phabrzyk@autnomous-systems.pl',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Paweł Habrzyk',
+    maintainer_email='pawelhabrzyk@gmail.com',
+    description='Master node - manages all things necessary to collect data',
+    license='Proprietary',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

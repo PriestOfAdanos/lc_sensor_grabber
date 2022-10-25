@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='lc',
+    maintainer='Paweł Habrzyk',
     maintainer_email='pawelhabrzyk@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='Publish transformation between base and lidar',
+    license='PROPRIETARY',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

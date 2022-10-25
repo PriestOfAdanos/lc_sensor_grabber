@@ -4,7 +4,7 @@
   <name>top_to_lidar_tf_static_publisher</name>
   <version>0.0.0</version>
   <description>Static tf publisher. Publishes transform from center of device to lidar</description>
-  <maintainer email="pawelhabrzyk@gmail.com">lc</maintainer>
+  <maintainer email="pawelhabrzyk@gmail.com">Paweł Habrzyk</maintainer>
   <license>Proprietary</license>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

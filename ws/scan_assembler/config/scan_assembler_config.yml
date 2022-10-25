@@ -1,9 +1,0 @@
-scan_assembler_node:
-  ros__parameters:
-    steps_to_full_circle: 240
-    make_clockwise_steps: True
-    bags_path: '/bags'
-    topics_to_subscribe:
-      - 'sensor_msgs/msg/LaserScan'
-      - 'tf2_msgs/msg/TFMessage'
-      - 'tf2_msgs/msg/TFMessage'

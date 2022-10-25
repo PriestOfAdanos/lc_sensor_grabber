@@ -63,7 +63,4 @@ COPY --from=dep-compile /opt/$USERNAME/install /opt/$USERNAME
 WORKDIR /
 COPY lc_entrypoint_scripts/* /opt/$USERNAME/scripts/
 
-COPY ./ros_entrypoint.sh /
-
-
-ENTRYPOINT ["/ros_entrypoint.sh"]
+COPY ./production_entrypoint.sh /

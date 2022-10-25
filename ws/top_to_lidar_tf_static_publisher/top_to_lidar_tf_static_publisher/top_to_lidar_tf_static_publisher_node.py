@@ -1,30 +1,27 @@
+import math
 import sys
 
-from geometry_msgs.msg import TransformStamped
-
 import rclpy
-from rclpy.node import Node
-
-from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
-
 import tf_transformations
-import math
+from geometry_msgs.msg import TransformStamped
+from rclpy.node import Node
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+from rclpy.parameter import Parameter
 
-class TopToLidarTfStaticPublisher(Node):
-   """
-   Broadcast transforms that never change.
 
-   This example publishes transforms from `world` to a static turtle frame.
-   The transforms are only published once at startup, and are constant for all
-   time.
-   """
-
+class TopToLidarTfStaticPublisher(Node): 
    def __init__(self):
-      super().__init__('static_turtle_tf2_broadcaster')
-
+      super().__init__('top_to_lidar_tf_static_publisher_node')
       self._tf_publisher = StaticTransformBroadcaster(self)
-
       # Publish static transforms once at startup
+      self.declare_parameter('parent_frame_id', Parameter.Type.STRING)
+      self.declare_parameter('child_frame_id', Parameter.Type.STRING)
+      self.declare_parameter('translationXYZ', Parameter.Type.DOUBLE_ARRAY)
+
+      self.parent_frame_id = self.get_parameter('parent_frame_id').value
+      self.child_frame_id = self.get_parameter('child_frame_id').value
+      self.translationXYZ = self.get_parameter('translationXYZ').value
+
       self.make_transforms()
 
    def make_transforms(self):
@@ -33,10 +30,11 @@ class TopToLidarTfStaticPublisher(Node):
       static_transformStamped.header.frame_id = 'top'
       static_transformStamped.child_frame_id = "laser_frame"
 
-      static_transformStamped.transform.translation.x = 0.142 # TODO(PriestOfAdanos): to config.yaml
-      static_transformStamped.transform.translation.y = 0.0 # TODO(PriestOfAdanos): to config.yaml
-      static_transformStamped.transform.translation.z = 0.1 # TODO(PriestOfAdanos): to config.yaml
-      quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz') # TODO(PriestOfAdanos): to config.yaml
+      (static_transformStamped.transform.translation.x, 
+       static_transformStamped.transform.translation.y, 
+       static_transformStamped.transform.translation.z) = self.translationXYZ
+      
+      quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz')
 
       static_transformStamped.transform.rotation.w = quat[0]
       static_transformStamped.transform.rotation.x = quat[1]
@@ -45,14 +43,14 @@ class TopToLidarTfStaticPublisher(Node):
 
       self._tf_publisher.sendTransform(static_transformStamped)
 
-
 def main():
-
    rclpy.init()
    node = TopToLidarTfStaticPublisher()
    try:
       rclpy.spin(node)
    except KeyboardInterrupt:
       pass
-
    rclpy.shutdown()
+   
+if __name__ == '__main__':
+    main()

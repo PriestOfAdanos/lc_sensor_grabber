@@ -4,7 +4,7 @@
   <name>lc_interfaces</name>
   <version>0.0.0</version>
   <description>Definitions of interfaces used to communicate beetwen nodes</description>
-  <maintainer email="pawelhabrzyk@gmail.com">lc</maintainer>
+  <maintainer email="pawelhabrzyk@gmail.com">Paweł Habrzyk</maintainer>
   <license>Proprietary</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

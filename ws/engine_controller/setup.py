@@ -1,3 +1,6 @@
+import os
+from glob import glob
+
 from setuptools import setup
 
 package_name = 'engine_controller'
@@ -13,8 +16,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='phabrzyk',
-    maintainer_email='phabrzyk@autnomous-systems.pl',
+    maintainer='Paweł Habrzyk',
+    maintainer_email='pawelhabrzyk@gmail.com',
     description='ros package to send current to correct pins to control stepper motor',
     license='Proprietary',
     tests_require=['pytest'],
