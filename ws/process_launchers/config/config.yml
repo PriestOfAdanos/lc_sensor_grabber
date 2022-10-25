@@ -1,11 +1,8 @@
-commons: &commons
-  steps_to_full_circle: 240
-
 engine_controller_node:
   ros__parameters:
     direction_pin: 20
     step_pin: 21
-    prod_mode: True
+    prod_mode: False
     delay: .0208
     parent_frame_id: 'base_link'
     child_frame_id: 'top'
@@ -13,19 +10,19 @@ engine_controller_node:
       - 0.0
       - 0.0
       - 0.0
-    <<: *commons
+    steps_to_full_circle: 240
 
 scan_assembler_node:
   ros__parameters:
     make_clockwise_steps: True
     bags_path: '/bags'
     topics_to_subscribe:
-      - 'sensor_msgs/msg/LaserScan'
-      - 'tf2_msgs/msg/TFMessage'
-      - 'tf2_msgs/msg/TFMessage'
-    <<: *commons
+      - '/tf'
+      - '/tf_static'
+     # - '/scan'
+    steps_to_full_circle: 240
 
-static_tf_broadcaster: 
+top_to_lidar_tf_static_publisher_node: 
   ros__parameters:
     parent_frame_id: 'top'
     child_frame_id: 'laser_frame'
@@ -33,5 +30,4 @@ static_tf_broadcaster:
       - 0.142
       - 0.0
       - 0.1
-
-    
+  
