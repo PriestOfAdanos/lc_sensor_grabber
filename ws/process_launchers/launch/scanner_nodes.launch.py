@@ -24,14 +24,14 @@ def generate_launch_description():
             parameters=[config],
             respawn=False
         ),
-        Node(
-            package='rplidar_ros2',
-            executable='rplidar_scan_publisher',
-            name='rplidar_scan_publisher',
-            output='both',            
-            parameters=[config],
-            respawn=False
-        ),
+        # Node(
+        #     package='rplidar_ros2',
+        #     executable='rplidar_scan_publisher',
+        #     name='rplidar_scan_publisher',
+        #     output='both',            
+        #     parameters=[config],
+        #     respawn=False
+        # ),
         Node(
             package='top_to_lidar_tf_static_publisher',
             executable='top_to_lidar_tf_static_publisher_node',
