@@ -19,7 +19,8 @@ scan_assembler_node:
     topics_to_subscribe:
       - '/tf'
       - '/tf_static'
-     # - '/scan'
+      - '/scan'
+    pause_beetwen_steps: 3 #seconds
     steps_to_full_circle: 240
 
 top_to_lidar_tf_static_publisher_node: 
