@@ -20,10 +20,10 @@ class EngineControllerNode(Node):
         self.declare_parameter('direction_pin', Parameter.Type.INTEGER)
         self.declare_parameter('step_pin', Parameter.Type.INTEGER)
         self.declare_parameter('prod_mode', Parameter.Type.BOOL)
-        self.declare_parameter('delay', Parameter.Type.FLOAT)
+        self.declare_parameter('delay', Parameter.Type.DOUBLE)
         self.declare_parameter('parent_frame_id', Parameter.Type.STRING)
         self.declare_parameter('child_frame_id', Parameter.Type.STRING)
-        self.declare_parameter('translationXYZ', Parameter.Type.FLOAT_ARRAY)
+        self.declare_parameter('translationXYZ', Parameter.Type.DOUBLE_ARRAY)
 
         self.steps_to_full_circle = self.get_parameter('steps_to_full_circle').value
         self.direction_pin = self.get_parameter('direction_pin').value
@@ -70,8 +70,8 @@ class EngineControllerNode(Node):
         t.header.stamp = self.get_clock().now().to_msg()
         t.header.frame_id = self.parent_frame_id 
         t.child_frame_id = self.child_frame_id 
-
-        t.transform.translation  = self.translationXYZ
+        
+        (t.transform.translation.x, t.transform.translation.y, t.transform.translation.z) = self.translationXYZ
         q = tf_transformations.quaternion_from_euler(0, 0, math.radians(self.angle),axes='rxyz')
         t.transform.rotation.w = q[0]
         t.transform.rotation.x = q[1]

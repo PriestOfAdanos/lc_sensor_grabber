@@ -9,14 +9,14 @@ from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 from rclpy.parameter import Parameter
 
 
-class TopToLidarTfStaticPublisher(Node):
+class TopToLidarTfStaticPublisher(Node): 
    def __init__(self):
-      super().__init__('static_tf_broadcaster')
+      super().__init__('top_to_lidar_tf_static_publisher_node')
       self._tf_publisher = StaticTransformBroadcaster(self)
       # Publish static transforms once at startup
       self.declare_parameter('parent_frame_id', Parameter.Type.STRING)
       self.declare_parameter('child_frame_id', Parameter.Type.STRING)
-      self.declare_parameter('translationXYZ', Parameter.Type.FLOAT_ARRAY)
+      self.declare_parameter('translationXYZ', Parameter.Type.DOUBLE_ARRAY)
 
       self.parent_frame_id = self.get_parameter('parent_frame_id').value
       self.child_frame_id = self.get_parameter('child_frame_id').value
@@ -30,7 +30,10 @@ class TopToLidarTfStaticPublisher(Node):
       static_transformStamped.header.frame_id = 'top'
       static_transformStamped.child_frame_id = "laser_frame"
 
-      static_transformStamped.transform.translation = self.translationXYZ
+      (static_transformStamped.transform.translation.x, 
+       static_transformStamped.transform.translation.y, 
+       static_transformStamped.transform.translation.z) = self.translationXYZ
+      
       quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz')
 
       static_transformStamped.transform.rotation.w = quat[0]
