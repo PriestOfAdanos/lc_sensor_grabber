@@ -30,12 +30,14 @@ class ScanAssembler(Node):
         self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
         self.declare_parameter('bags_path', Parameter.Type.STRING)
         self.declare_parameter('topics_to_subscribe', Parameter.Type.STRING_ARRAY)
+        self.declare_parameter('pause_beetwen_steps', Parameter.Type.INTEGER)
         self.declare_parameter('bag_name', value = 'scan')
             
         self.steps_to_full_circle = self.get_parameter('steps_to_full_circle').value
         self.make_clockwise_steps = self.get_parameter('make_clockwise_steps').value
         self.bags_path = self.get_parameter('bags_path').value
         self.topics_to_subscribe = self.get_parameter('topics_to_subscribe').value
+        self.pause_beetwen_steps = self.get_parameter('pause_beetwen_steps').value
         self.bag_name = self.get_parameter('bag_name').value
 
         self.make_step_client = self.create_client(MakeStep, "make_step", callback_group=self.callback_group)
@@ -107,7 +109,7 @@ class ScanAssembler(Node):
         self.get_logger().info("started to make steps")
 
         for _ in range(self.steps_to_full_circle):
-            time.sleep(3) # TODO(PriestOfAdanos): move to config
+            time.sleep(self.pause_beetwen_steps)
             self.send_request()
         self.stop_recording()
         res.message = "Skan zakończony"
