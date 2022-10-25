@@ -24,7 +24,7 @@ run_docker() {
 
 while getopts "pdt:b:" flag; do
   case "${flag}" in
-    p) trailing_parameters="/ros_entrypoint.sh"
+    p) trailing_parameters="/production_entrypoint.sh"
        forward_parameters="--device=/dev/ttyUSB0"
        print_help=false
     ;;
