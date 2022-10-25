@@ -1,12 +1,13 @@
 from datetime import datetime
 from functools import partial
 
+import lc_interfaces, tf2_msgs.msg, sensor_msgs.msg
 import rclpy
 import rosbag2_py
 from lc_interfaces.srv import MakeScan, MakeStep
 from rclpy.node import Node
-from rclpy.serialization import serialize_message
 from rclpy.parameter import Parameter
+from rclpy.serialization import serialize_message
 
 
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
@@ -54,7 +55,7 @@ class ScanAssembler(Node):
                 serialization_format='cdr')
 
             self.topic_subscriptions[topic] = self.create_subscription(
-                topic_type[1],
+                eval(topic_type[0].replace("/", ".")),
                 topic,
                 partial(self.topic_callback, topic_name=topic),
                 10)
@@ -105,7 +106,7 @@ def main(args=None):
     try:
         rclpy.spin(scan_assembler_node)
     except KeyboardInterrupt:
-        pass # TODO(PriestOfAdanos): add such safety to all nodes
+        scan_assembler_node.stop_recording() 
     scan_assembler_node.destroy_node()
     rclpy.shutdown()
 
