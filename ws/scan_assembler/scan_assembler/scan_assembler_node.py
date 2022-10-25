@@ -1,5 +1,7 @@
+import time
 from datetime import datetime
 from functools import partial
+from threading import Event
 
 import lc_interfaces, tf2_msgs.msg, sensor_msgs.msg
 import rclpy
@@ -8,7 +10,8 @@ from lc_interfaces.srv import MakeScan, MakeStep
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.serialization import serialize_message
-
+from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
 class ScanAssembler(Node):
@@ -16,24 +19,28 @@ class ScanAssembler(Node):
 
     def __init__(self):
         super().__init__("scan_assembler_node")
+        
         self.topic_subscriptions = {}
         self.topic_storage_metadata_infos = {}
         self._is_recording = False
         datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
-        
+        self.callback_group = ReentrantCallbackGroup()
+
         self.declare_parameter('steps_to_full_circle', Parameter.Type.INTEGER)
         self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
         self.declare_parameter('bags_path', Parameter.Type.STRING)
         self.declare_parameter('topics_to_subscribe', Parameter.Type.STRING_ARRAY)
+        self.declare_parameter('pause_beetwen_steps', Parameter.Type.INTEGER)
         self.declare_parameter('bag_name', value = 'scan')
             
         self.steps_to_full_circle = self.get_parameter('steps_to_full_circle').value
         self.make_clockwise_steps = self.get_parameter('make_clockwise_steps').value
         self.bags_path = self.get_parameter('bags_path').value
         self.topics_to_subscribe = self.get_parameter('topics_to_subscribe').value
+        self.pause_beetwen_steps = self.get_parameter('pause_beetwen_steps').value
         self.bag_name = self.get_parameter('bag_name').value
 
-        self.make_step_client = self.create_client(MakeStep, "make_step")
+        self.make_step_client = self.create_client(MakeStep, "make_step", callback_group=self.callback_group)
         self.srv = self.create_service(
             MakeScan, 'make_scan', self.make_scan_callback)
         self.writer = rosbag2_py.SequentialWriter()
@@ -68,10 +75,18 @@ class ScanAssembler(Node):
             self.get_clock().now().nanoseconds)
 
     def send_request(self):
-        self.future = self.make_step_client.call_async(MakeStep.Request())
-        rclpy.spin_until_future_complete(self, self.future)
         self.get_logger().info("make_step requested")
-        return self.future.result()
+        event=Event()
+        def done_callback(future):
+            nonlocal event
+            event.set()
+        
+        future = self.make_step_client.call_async(MakeStep.Request())
+        future.add_done_callback(done_callback)
+
+        event.wait()
+        self.get_logger().info("make_step done")
+        return future.result()
 
     def is_recording(self):
         return self._is_recording
@@ -94,6 +109,7 @@ class ScanAssembler(Node):
         self.get_logger().info("started to make steps")
 
         for _ in range(self.steps_to_full_circle):
+            time.sleep(self.pause_beetwen_steps)
             self.send_request()
         self.stop_recording()
         res.message = "Skan zakończony"
@@ -103,8 +119,10 @@ class ScanAssembler(Node):
 def main(args=None):
     rclpy.init(args=args)
     scan_assembler_node = ScanAssembler()
+    executor = MultiThreadedExecutor()
+
     try:
-        rclpy.spin(scan_assembler_node)
+        rclpy.spin(scan_assembler_node, executor)
     except KeyboardInterrupt:
         scan_assembler_node.stop_recording() 
     scan_assembler_node.destroy_node()

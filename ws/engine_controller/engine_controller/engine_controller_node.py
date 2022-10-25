@@ -51,13 +51,12 @@ class EngineControllerNode(Node):
             self.RPI_GPIO.setup(self.step_pin, self.RPI_GPIO.OUT)
 
     def make_step_callback(self, req, res):
-        delay = self.delay
         if self.prod_mode:
             self.RPI_GPIO.output(self.direction_pin, req.make_clockwise_step) # counterclockwise otherwise 
             self.RPI_GPIO.output(self.step_pin, self.RPI_GPIO.HIGH)
-            time.sleep(delay)
+            time.sleep(self.delay)
             self.RPI_GPIO.output(self.step_pin, self.RPI_GPIO.LOW)
-            time.sleep(delay)
+            time.sleep(self.delay)
         
         self.angle += self.step_angle
         self.base_link_to_top_tf_publisher()

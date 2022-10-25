@@ -3,7 +3,7 @@ engine_controller_node:
     direction_pin: 20
     step_pin: 21
     prod_mode: True
-    delay: .0208
+    delay: 0.0208
     parent_frame_id: 'base_link'
     child_frame_id: 'top'
     translationXYZ: 
@@ -19,7 +19,8 @@ scan_assembler_node:
     topics_to_subscribe:
       - '/tf'
       - '/tf_static'
-     # - '/scan'
+      - '/scan'
+    pause_beetwen_steps: 3 #seconds
     steps_to_full_circle: 240
 
 top_to_lidar_tf_static_publisher_node: 
