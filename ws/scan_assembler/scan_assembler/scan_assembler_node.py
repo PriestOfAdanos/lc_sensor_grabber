@@ -10,7 +10,7 @@ from lc_interfaces.srv import MakeScan, MakeStep
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.serialization import serialize_message
-from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.callback_groups import ReentrantCallbackGroup, MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
@@ -24,7 +24,8 @@ class ScanAssembler(Node):
         self.topic_storage_metadata_infos = {}
         self._is_recording = False
         datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
-        self.callback_group = ReentrantCallbackGroup()
+        self.reentrant_callback_group = ReentrantCallbackGroup()
+        self.mutually_exclusive_callback_group = ReentrantCallbackGroup()
 
         self.declare_parameter('steps_to_full_circle', Parameter.Type.INTEGER)
         self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
@@ -40,9 +41,9 @@ class ScanAssembler(Node):
         self.pause_beetwen_steps = self.get_parameter('pause_beetwen_steps').value
         self.bag_name = self.get_parameter('bag_name').value
 
-        self.make_step_client = self.create_client(MakeStep, "make_step", callback_group=self.callback_group)
+        self.make_step_client = self.create_client(MakeStep, "make_step", callback_group=self.reentrant_callback_group)
         self.srv = self.create_service(
-            MakeScan, 'make_scan', self.make_scan_callback)
+            MakeScan, 'make_scan', self.make_scan_callback, callback_group=self.mutually_exclusive_callback_group)
         self.writer = rosbag2_py.SequentialWriter()
 
         storage_options = rosbag2_py._storage.StorageOptions(
@@ -105,12 +106,24 @@ class ScanAssembler(Node):
     # TODO(PriestOfAdanos): add error raising to above functions
 
     def make_scan_callback(self, req, res):
+        
         self.start_recording()
-        self.get_logger().info("started to make steps")
 
         for _ in range(self.steps_to_full_circle):
-            time.sleep(self.pause_beetwen_steps)
-            self.send_request()
+            # time.sleep(self.pause_beetwen_steps)
+            self.get_logger().info("started to make steps")
+
+            # self.get_logger().info("make_step requested")
+            event=Event()
+            def done_callback(future):
+                nonlocal event
+                event.set()
+            
+            future = self.make_step_client.call_async(MakeStep.Request())
+            future.add_done_callback(done_callback)
+
+            event.wait()
+            self.get_logger().info("make_step done")
         self.stop_recording()
         res.message = "Skan zakończony"
         return res

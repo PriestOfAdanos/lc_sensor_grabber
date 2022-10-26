@@ -8,7 +8,10 @@ from lc_interfaces.srv import MakeStep, SetStepAngle
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from tf2_ros import TransformBroadcaster
-
+try:
+    import RPi.GPIO as GPIO 
+except:
+    pass
 
 class EngineControllerNode(Node):
     """Node to make steps on request by set angle."""
@@ -44,7 +47,7 @@ class EngineControllerNode(Node):
         self.base_link_to_top_tf_publisher()
 
         if self.prod_mode:
-            import RPi.GPIO as GPIO 
+            
             self.RPI_GPIO = GPIO
             self.RPI_GPIO.setmode(self.RPI_GPIO.BCM)
             self.RPI_GPIO.setup(self.direction_pin, self.RPI_GPIO.OUT)

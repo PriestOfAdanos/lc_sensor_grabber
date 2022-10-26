@@ -2,7 +2,7 @@ engine_controller_node:
   ros__parameters:
     direction_pin: 20
     step_pin: 21
-    prod_mode: True # TODO(PRiestOfAdanos): this should be dynamic, set from run script
+    prod_mode: False # TODO(PRiestOfAdanos): this should be dynamic, set from run script
     delay: 0.0208
     parent_frame_id: 'base_link'
     child_frame_id: 'top'
@@ -17,9 +17,9 @@ scan_assembler_node:
     make_clockwise_steps: True
     bags_path: '/bags'
     topics_to_subscribe:
-      - 'tf'
-      - 'tf_static'
-      - 'scan'
+      - '/tf'
+      - '/tf_static'
+      - '/scan'
     pause_beetwen_steps: 3 #seconds
     steps_to_full_circle: 240
 
