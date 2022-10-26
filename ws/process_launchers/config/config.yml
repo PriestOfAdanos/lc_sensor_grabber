@@ -17,9 +17,9 @@ scan_assembler_node:
     make_clockwise_steps: True
     bags_path: '/bags'
     topics_to_subscribe:
-      - '/tf'
-      - '/tf_static'
-      - '/scan'
+      - 'tf'
+      - 'tf_static'
+      - 'scan'
     pause_beetwen_steps: 3 #seconds
     steps_to_full_circle: 240
 
