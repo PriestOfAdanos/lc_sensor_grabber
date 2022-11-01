@@ -27,6 +27,7 @@ class ScanAssembler(Node):
         self.reentrant_callback_group = ReentrantCallbackGroup()
         self.mutually_exclusive_callback_group = ReentrantCallbackGroup()
 
+
         self.declare_parameter('steps_to_full_circle', Parameter.Type.INTEGER)
         self.declare_parameter('make_clockwise_steps', Parameter.Type.BOOL)
         self.declare_parameter('bags_path', Parameter.Type.STRING)
@@ -40,8 +41,8 @@ class ScanAssembler(Node):
         self.topics_to_subscribe = self.get_parameter('topics_to_subscribe').value
         self.pause_beetwen_steps = self.get_parameter('pause_beetwen_steps').value
         self.bag_name = self.get_parameter('bag_name').value
-
         self.make_step_client = self.create_client(MakeStep, "make_step", callback_group=self.reentrant_callback_group)
+
         self.srv = self.create_service(
             MakeScan, 'make_scan', self.make_scan_callback, callback_group=self.mutually_exclusive_callback_group)
         self.writer = rosbag2_py.SequentialWriter()
@@ -124,6 +125,7 @@ class ScanAssembler(Node):
 
             event.wait()
             self.get_logger().info("make_step done")
+
         self.stop_recording()
         res.message = "Skan zakończony"
         return res
