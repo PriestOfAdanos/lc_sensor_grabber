@@ -24,15 +24,15 @@ target_include_directories(draft_pc2_assembler_node PUBLIC
 target_compile_features(draft_pc2_assembler_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
   draft_pc2_assembler_node
-  "laser_geometry"
-  "sensor_msgs"
-  "lc_interfaces"
-  "tf2_ros"
-  "tf2_msgs"
-  "rclcpp"
-  "pcl_conversions"
-  "pcl_ros"
-  "PCL"
+  laser_geometry
+  sensor_msgs
+  lc_interfaces
+  tf2_ros
+  tf2_msgs
+  rclcpp
+  pcl_conversions
+  pcl_ros
+  PCL
 )
 
 install(TARGETS draft_pc2_assembler_node
