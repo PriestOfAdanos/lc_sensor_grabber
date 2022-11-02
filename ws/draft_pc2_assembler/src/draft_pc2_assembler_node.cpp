@@ -7,12 +7,12 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "laser_geometry/laser_geometry.hpp"
 #include "message_filters/subscriber.h"
+#include "pcl_ros/point_cloud.h"
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/create_timer_ros.h"
 #include "tf2_ros/message_filter.h"
-#include <pcl_ros/point_cloud.h>
 
 
 using std::placeholders::_1;
@@ -43,7 +43,7 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  pcl::PointCloudConcatenateDataSynchronizer merger_;
+  pcl_ros::PointCloudConcatenateDataSynchronizer merger_;
   laser_geometry::LaserProjection projector_;
   sensor_msgs::msg::PointCloud2 draftCloud;
 };
