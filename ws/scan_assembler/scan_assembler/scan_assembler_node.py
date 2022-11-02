@@ -33,7 +33,6 @@ class ScanAssembler(Node):
         self._is_recording = False
         datetime_now = datetime.now().strftime("%d-%m-%Y|%H:%M:%S")
         self.reentrant_callback_group = ReentrantCallbackGroup()
-        self.DraftPointCloud2 = sensor_msgs.msg.PointCloud2()
 
         self.declare_parameter("target_frame", Parameter.Type.STRING)
         self.declare_parameter("steps_to_full_circle", Parameter.Type.INTEGER)
@@ -60,10 +59,6 @@ class ScanAssembler(Node):
             MakeStep, "make_step", callback_group=self.reentrant_callback_group
         )
 
-        self.assemble_scans_client = self.create_client(
-            AssembleScans2, "assemble_scans", self.reentrant_callback_group
-        )
-
         self.make_scan_service = self.create_service(
             MakeScan,
             "make_scan",
@@ -83,6 +78,12 @@ class ScanAssembler(Node):
         self.set_recording_on()
         self.topic_name_type_dict = dict(self.get_topic_names_and_types())
         # call service to make draft pointcloud2
+        self.create_subscription(
+                sensor_msgs.msg.LaserScan,
+                "/scan",
+                self.scan_assembling_callback,
+                10,
+            )
 
         for topic in self.topics_to_subscribe:
             topic_type_list = self.topic_name_type_dict[topic]
@@ -104,20 +105,6 @@ class ScanAssembler(Node):
         self.writer.write(
             topic_name, serialize_message(msg), self.get_clock().now().nanoseconds
         )
-
-    def send_assemble_scans_request(self):
-        self.get_logger().info("assemble_scans_client requested")
-        event = Event()
-        
-        def done_callback(future):
-            nonlocal event
-            event.set()
-            
-        future = self.assemble_scans_client.call_async(self.assemble_scans_request)
-        future.add_done_callback(done_callback)
-        event.wait()
-        self.get_logger().info("assemble_scans_client done")
-        return future.result()
 
     def is_recording(self):
         return self._is_recording

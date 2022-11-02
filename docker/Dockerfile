@@ -1,27 +1,28 @@
 ARG USERNAME=lc
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-ARG ROS_VERSION=galactic
 ARG BRANCH
 
 
-FROM ghcr.io/priestofadanos/ros:$ROS_VERSION AS dep-install
+FROM ghcr.io/priestofadanos/ros:galactic AS dep-install
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
   wget nano build-essential libomp-dev clang lld git\
-  ros-$ROS_VERSION-tf2-tools ros-$ROS_VERSION-tf-transformations \
+  ros-$ROS_DISTRO-tf2-tools ros-$ROS_DISTRO-tf-transformations \
   libeigen3-dev \
   libpcl-dev \
   libbluetooth-dev \
-  ros-$ROS_VERSION-geodesy ros-$ROS_VERSION-pcl-ros ros-$ROS_VERSION-nmea-msgs \
-  ros-$ROS_VERSION-sensor-msgs \
-  ros-$ROS_VERSION-sensor-msgs-py \
-  ros-$ROS_VERSION-rosbridge-suite \
-  ros-$ROS_VERSION-laser-assembler \
+  ros-$ROS_DISTRO-geodesy ros-$ROS_DISTRO-pcl-ros ros-$ROS_DISTRO-nmea-msgs \
+  ros-$ROS_DISTRO-sensor-msgs \
+  ros-$ROS_DISTRO-sensor-msgs-py \
+  ros-$ROS_DISTRO-rosbridge-suite \
+  ros-$ROS_DISTRO-filters \
+  ros-$ROS_DISTRO-pcl-ros \
+  ros-$ROS_DISTRO-pcl-conversions \
+  ros-$ROS_DISTRO-tf2-ros \
   python3-pip python3-dev python3-setuptools python3-wheel
 
 RUN pip3 install RPi.GPIO transforms3d bluedot
@@ -34,28 +35,29 @@ FROM dep-install as dep-compile
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
-ARG ROS_VERSION
 ARG BRANCH
 
 
 WORKDIR /opt/$USERNAME/src
 
 #TODO(PriestOfAdanos): should take local folder istead of some branch from git
+#TODO(PriestOfAdanos): move to config file
 RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git -b $BRANCH 
 RUN git clone https://github.com/Slamtec/rplidar_ros.git -b ros2 
-RUN git clone https://github.com/ros-perception/laser_geometry.git -b ros2
+RUN git clone https://github.com/ros-perception/laser_geometry.git -b $ROS_DISTRO
 
 COPY . /opt/$USERNAME/src/ndt_omp/
 
 WORKDIR /opt/$USERNAME
-RUN /bin/bash -c '. /opt/ros/$ROS_VERSION/setup.bash; colcon build'
+
+# RUN rosdep update && rosdep install --from-paths . --ignore-src -r -y
+
+RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; colcon build'
 
 FROM  dep-install AS final
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
-# ARG ROS_VERSION
-# ARG BRANCH
 
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 

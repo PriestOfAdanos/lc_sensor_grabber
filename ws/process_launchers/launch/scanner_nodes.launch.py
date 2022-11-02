@@ -49,14 +49,6 @@ def generate_launch_description():
             )
         ),
         Node(
-            package='laser_assembler',
-            executable='laser_scan_assembler',
-            name='draft_cloud_assembler',
-            output='both',
-            parameters=[config],
-            respawn=False
-        ),
-        Node(
             package='top_to_lidar_tf_static_publisher',
             executable='top_to_lidar_tf_static_publisher_node',
             name='top_to_lidar_tf_static_publisher_node',
