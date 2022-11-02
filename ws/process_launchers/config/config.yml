@@ -2,7 +2,7 @@ engine_controller_node:
   ros__parameters:
     direction_pin: 20
     step_pin: 21
-    prod_mode: True # TODO(PRiestOfAdanos): this should be dynamic, set from run script
+    prod_mode: False # TODO(PRiestOfAdanos): this should be dynamic, set from run script
     delay: 0.0208
     parent_frame_id: 'base_link'
     child_frame_id: 'top'
@@ -22,6 +22,7 @@ scan_assembler_node:
       - '/scan'
     pause_beetwen_steps: 3 #seconds
     steps_to_full_circle: 240
+    target_frame: "base_link"
 
 top_to_lidar_tf_static_publisher_node: 
   ros__parameters:
@@ -31,4 +32,12 @@ top_to_lidar_tf_static_publisher_node:
       - 0.142
       - 0.0
       - 0.1
-  
+
+laser_scan_assembler:
+  ros__parameters:
+    fixed_frame: "base_link"
+    tf_cache_time_secs: 10.0 # default: 10.0
+    max_scans: 400 # default: 400
+    ignore_laser_skew: True  # default: True)
+
+

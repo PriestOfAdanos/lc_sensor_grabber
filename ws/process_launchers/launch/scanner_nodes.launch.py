@@ -33,14 +33,6 @@ def generate_launch_description():
             respawn=False
         ),
         Node(
-            package='top_to_lidar_tf_static_publisher',
-            executable='top_to_lidar_tf_static_publisher_node',
-            name='top_to_lidar_tf_static_publisher_node',
-            output='both',
-            parameters=[config],
-            respawn=False
-        ),
-        Node(
             package='scan_assembler',
             executable='scan_assembler_node',
             name='scan_assembler_node',
@@ -55,5 +47,21 @@ def generate_launch_description():
                     'launch/rosbridge_websocket_launch.xml'
                 ),
             )
-        )
+        ),
+        Node(
+            package='laser_assembler',
+            executable='laser_scan_assembler',
+            name='draft_cloud_assembler',
+            output='both',
+            parameters=[config],
+            respawn=False
+        ),
+        Node(
+            package='top_to_lidar_tf_static_publisher',
+            executable='top_to_lidar_tf_static_publisher_node',
+            name='top_to_lidar_tf_static_publisher_node',
+            output='both',
+            parameters=[config],
+            respawn=False
+        ),
     ])
