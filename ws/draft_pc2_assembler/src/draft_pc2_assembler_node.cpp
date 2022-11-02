@@ -12,7 +12,7 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/create_timer_ros.h"
 #include "tf2_ros/message_filter.h"
-#include <pcl_ros/pcl_config.h>
+#include <pcl_ros/point_cloud.h>
 
 
 using std::placeholders::_1;
