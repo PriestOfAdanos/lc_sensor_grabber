@@ -35,17 +35,19 @@ public:
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    sensor_msgs::msg::PointCloud2 cloud, tmpCloud;
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr tmpCloud(new pcl::PointCloud<pcl::PointXYZ>);
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
                                               cloud, *tf_buffer_);
-    merger_(cloud);
+    *tmpCloud = (*cloud) + (*draftCloud);
+    *draftCloud = *tmpCloud;
   }
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-  pcl_ros::PointCloudConcatenateDataSynchronizer merger_;
   laser_geometry::LaserProjection projector_;
-  sensor_msgs::msg::PointCloud2 draftCloud;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr draftCloud;
 };
 
 int main(int argc, char *argv[])
