@@ -13,9 +13,10 @@
 #include "tf2_ros/create_timer_ros.h"
 #include "tf2_ros/message_filter.h"
 #include "pcl_conversions/pcl_conversions.h"
-#include <pcl/PCLPointCloud2.h>
-
-
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
 
 using std::placeholders::_1;
 
@@ -38,7 +39,7 @@ private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
 
-    pcl::PCLPointCloud2<pcl::PointXYZ>::Ptr cloud(new pcl::PCLPointCloud2<pcl::PointXYZ>);
+    sensor_msgs::PointCloud2 cloud;
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
                                               cloud, *tf_buffer_);
     *cloud += *draftCloud;
