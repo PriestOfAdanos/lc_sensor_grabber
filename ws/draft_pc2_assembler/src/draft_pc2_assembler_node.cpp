@@ -22,7 +22,7 @@
 
 using std::placeholders::_1;
 
-class MinimalSubscriber : public rclcpp::Node
+class DraftPC2Assembler : public rclcpp::Node
 {
 public:
   DraftPC2Assembler()
@@ -36,7 +36,7 @@ public:
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("draft_scan", 10);
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", 10, std::bind(&MinimalSubscriber::scanCallback, this, std::placeholders::_1));
+        "scan", 10, std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
   }
 
 private:
