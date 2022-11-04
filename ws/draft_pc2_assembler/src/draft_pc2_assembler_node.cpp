@@ -33,6 +33,8 @@ public:
     tf_listener_ =
         std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
+    publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("draft_scan", 10);
+
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", 10, std::bind(&MinimalSubscriber::scanCallback, this, std::placeholders::_1));
   }
@@ -48,12 +50,16 @@ private:
     pcl_conversions::toPCL(cloud, pcl_pc);
     (pcl_pc) += (*draftCloud);
     *draftCloud = pcl_pc;
+    pcl_conversions::fromPCL(draftCloud, cloud);
+    publisher_->publish(cloud);
   }
+
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
   pcl::PCLPointCloud2::Ptr draftCloud;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
 };
 
 int main(int argc, char *argv[])
