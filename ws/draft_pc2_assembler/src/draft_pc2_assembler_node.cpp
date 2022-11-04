@@ -44,8 +44,8 @@ private:
     sensor_msgs::msg::PointCloud2 cloud;
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
                                               cloud, *tf_buffer_);
-    (*cloud) += (*draftCloud);
-    *draftCloud = *cloud;
+    (cloud) += (*draftCloud);
+    *draftCloud = cloud;
   }
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
