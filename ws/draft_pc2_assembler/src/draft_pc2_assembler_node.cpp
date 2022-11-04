@@ -44,7 +44,7 @@ private:
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tmpCloud(new pcl::PointCloud<pcl::PointXYZ>);
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
-                                              cloud, *tf_buffer_);
+                                              *cloud, *tf_buffer_);
     *tmpCloud = (*cloud) + (*draftCloud);
     *draftCloud = *tmpCloud;
   }
