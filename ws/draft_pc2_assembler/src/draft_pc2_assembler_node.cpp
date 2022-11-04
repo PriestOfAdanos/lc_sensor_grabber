@@ -50,7 +50,7 @@ private:
     pcl_conversions::toPCL(cloud, pcl_pc);
     (pcl_pc) += (*draftCloud);
     *draftCloud = pcl_pc;
-    pcl_conversions::fromPCL(draftCloud, cloud);
+    pcl_conversions::fromPCL(*draftCloud, cloud);
     publisher_->publish(cloud);
   }
 
