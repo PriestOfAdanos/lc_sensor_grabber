@@ -18,6 +18,8 @@
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 #include <pcl/PCLPointCloud2.h>
+#include <pcl/common/projection_matrix.h>
+
 
 using std::placeholders::_1;
 
