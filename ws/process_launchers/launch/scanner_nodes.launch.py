@@ -56,4 +56,12 @@ def generate_launch_description():
             parameters=[config],
             respawn=False
         ),
+        Node(
+            package='draft_pc2_assembler',
+            executable='draft_pc2_assembler_node',
+            name='draft_pc2_assembler_node',
+            output='both',
+            parameters=[config],
+            respawn=False
+        ),
     ])

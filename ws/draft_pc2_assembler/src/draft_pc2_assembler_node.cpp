@@ -25,8 +25,8 @@ using std::placeholders::_1;
 class MinimalSubscriber : public rclcpp::Node
 {
 public:
-  MinimalSubscriber()
-      : Node("minimal_subscriber")
+  DraftPC2Assembler()
+      : Node("draft_pc2_assembler_node")
   {
     tf_buffer_ =
         std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -65,7 +65,7 @@ private:
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
+  rclcpp::spin(std::make_shared<DraftPC2Assembler>());
   rclcpp::shutdown();
   return 0;
 }
