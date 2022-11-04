@@ -42,10 +42,12 @@ private:
   {
 
     sensor_msgs::msg::PointCloud2 cloud;
+    pcl::PCLPointCloud2 pcl_pc;
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
                                               cloud, *tf_buffer_);
-    (cloud) += (*draftCloud);
-    *draftCloud = cloud;
+    pcl_conversions::toPCL(cloud, pcl_pc);
+    (pcl_pc) += (*draftCloud);
+    *draftCloud = pcl_pc;
   }
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
