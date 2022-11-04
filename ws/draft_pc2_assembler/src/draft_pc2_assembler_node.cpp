@@ -34,7 +34,7 @@ public:
         std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", 10, std::bind(&MinimalSubscriber::scanCallback, this, _1));
+        "scan", 10, std::bind(&MinimalSubscriber::scanCallback, this, std::placeholders::_1));
   }
 
 private:
