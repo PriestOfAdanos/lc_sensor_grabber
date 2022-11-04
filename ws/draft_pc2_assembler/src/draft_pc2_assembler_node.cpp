@@ -53,7 +53,7 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
-  pcl::PointCloud<pcl::PointXYZ>::Ptr draftCloud;
+  pcl::PCLPointCloud2::Ptr draftCloud;
 };
 
 int main(int argc, char *argv[])
