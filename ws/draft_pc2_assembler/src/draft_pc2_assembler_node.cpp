@@ -20,7 +20,6 @@
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/common/projection_matrix.h>
 
-
 using std::placeholders::_1;
 
 class MinimalSubscriber : public rclcpp::Node
@@ -42,17 +41,18 @@ private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
 
-    pcl::PCLPointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PCLPointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr tmpCloud(new pcl::PointCloud<pcl::PointXYZ>);
     projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
                                               cloud, *tf_buffer_);
-    *cloud += *draftCloud;
-    *draftCloud = *cloud;
+    *tmpCloud = (*cloud) + (*draftCloud);
+    *draftCloud = *tmpCloud;
   }
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
-  pcl::PCLPointCloud<pcl::PointXYZ>::Ptr draftCloud;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr draftCloud;
 };
 
 int main(int argc, char *argv[])
