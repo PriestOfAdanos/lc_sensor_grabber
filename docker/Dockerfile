@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ros-$ROS_DISTRO-pcl-ros \
   ros-$ROS_DISTRO-pcl-conversions \
   ros-$ROS_DISTRO-tf2-ros \
+  ros-$ROS_DISTRO-laser-geometry \
   python3-pip python3-dev python3-setuptools python3-wheel
 
 RUN pip3 install RPi.GPIO transforms3d bluedot
