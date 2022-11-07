@@ -8,6 +8,7 @@
   <license>Proprietary</license>
   <depend>rclpy</depend>
   <depend>lc_interfaces</depend>
+  <depend>laser_geometry</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
