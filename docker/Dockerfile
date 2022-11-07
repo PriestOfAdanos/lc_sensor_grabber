@@ -44,7 +44,7 @@ WORKDIR /opt/$USERNAME/src
 #TODO(PriestOfAdanos): move to config file
 RUN git clone https://github.com/PriestOfAdanos/lc_sensor_grabber.git -b $BRANCH 
 RUN git clone https://github.com/Slamtec/rplidar_ros.git -b ros2 
-RUN git clone https://github.com/ros-perception/laser_geometry.git -b $ROS_DISTRO
+RUN git clone https://github.com/ros-perception/laser_geometry.git -b ros2
 
 COPY . /opt/$USERNAME/src/ndt_omp/
 
