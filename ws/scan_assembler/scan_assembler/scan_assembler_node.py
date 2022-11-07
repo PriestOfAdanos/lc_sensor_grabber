@@ -10,15 +10,17 @@ import rclpy
 import rosbag2_py
 import sensor_msgs.msg
 import tf2_msgs.msg
+from laser_assembler.srv import AssembleScans2
 from lc_interfaces.srv import MakeScan, MakeStep
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
+from rclpy.callback_groups import (MutuallyExclusiveCallbackGroup,
+                                   ReentrantCallbackGroup)
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.serialization import serialize_message
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
-from laser_assembler.srv import AssembleScans2
+
 
 # from builtin_interfaces.msg import Time
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
