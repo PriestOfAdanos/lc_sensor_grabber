@@ -1,4 +1,3 @@
-import math
 import time
 from datetime import datetime
 from functools import partial
@@ -10,17 +9,12 @@ import rclpy
 import rosbag2_py
 import sensor_msgs.msg
 import tf2_msgs.msg
-from laser_assembler.srv import AssembleScans2
 from lc_interfaces.srv import MakeScan, MakeStep
-from rclpy.callback_groups import (MutuallyExclusiveCallbackGroup,
-                                   ReentrantCallbackGroup)
+from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.serialization import serialize_message
-from tf2_ros.buffer import Buffer
-from tf2_ros.transform_listener import TransformListener
-
 
 # from builtin_interfaces.msg import Time
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
@@ -51,11 +45,6 @@ class ScanAssembler(Node):
         self.topics_to_subscribe = self.get_parameter("topics_to_subscribe").value
         self.pause_beetwen_steps = self.get_parameter("pause_beetwen_steps").value
         self.bag_name = self.get_parameter("bag_name").value
-
-        self.assemble_scans_request = AssembleScans2.Request()
-        self.assemble_scans_request.begin = self.get_clock().now().to_msg()
-        future_time = self.get_clock().now() + rclpy.time.Duration(minutes=7.0)
-        self.assemble_scans_request.end = future_time.to_msg()
 
         self.make_step_client = self.create_client(
             MakeStep, "make_step", callback_group=self.reentrant_callback_group
@@ -127,7 +116,6 @@ class ScanAssembler(Node):
 
     def make_scan_callback(self, req, res):
         self.start_recording()
-        self.send_assemble_scans_request()
         for _ in range(self.steps_to_full_circle):
             time.sleep(self.pause_beetwen_steps)
             self.get_logger().info("started to make steps")
