@@ -32,11 +32,12 @@ public:
         std::make_unique<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ =
         std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("draft_scan", 10);
+    auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().durability_volatile();
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", 10, std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
+        "scan", qos, 
+        std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
   }
 
 private:
