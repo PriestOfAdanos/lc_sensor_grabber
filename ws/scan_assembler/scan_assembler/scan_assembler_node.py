@@ -69,12 +69,6 @@ class ScanAssembler(Node):
         self.set_recording_on()
         self.topic_name_type_dict = dict(self.get_topic_names_and_types())
         # call service to make draft pointcloud2
-        self.create_subscription(
-                sensor_msgs.msg.LaserScan,
-                "/scan",
-                self.scan_assembling_callback,
-                10,
-            )
 
         for topic in self.topics_to_subscribe:
             topic_type_list = self.topic_name_type_dict[topic]
