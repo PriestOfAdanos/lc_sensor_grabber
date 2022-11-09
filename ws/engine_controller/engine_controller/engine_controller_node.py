@@ -54,6 +54,7 @@ class EngineControllerNode(Node):
             self.RPI_GPIO.setup(self.step_pin, self.RPI_GPIO.OUT)
 
     def make_step_callback(self, req, res):
+        self.get_logger().info("step made")
         if self.prod_mode:
             self.RPI_GPIO.output(self.direction_pin, req.make_clockwise_step) # counterclockwise otherwise 
             self.RPI_GPIO.output(self.step_pin, self.RPI_GPIO.HIGH)

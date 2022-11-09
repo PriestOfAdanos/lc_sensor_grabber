@@ -46,7 +46,7 @@ private:
 
     sensor_msgs::msg::PointCloud2 cloud;
     pcl::PCLPointCloud2 pcl_pc;
-    projector_.transformLaserScanToPointCloud("/base_link", *scan_in,
+    projector_.transformLaserScanToPointCloud("base_link", *scan_in,
                                               cloud, *tf_buffer_);
     pcl_conversions::toPCL(cloud, pcl_pc);
     (pcl_pc) += (*draftCloud);
