@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <memory>
+#include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -21,6 +22,7 @@
 #include <pcl/common/projection_matrix.h>
 
 using std::placeholders::_1;
+using namespace std::chrono_literals;
 
 class DraftPC2Assembler : public rclcpp::Node
 {
@@ -38,15 +40,13 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
-    tf_buffer_->waitForTransform("base_link", "top", rclcpp::Clock().now(),
-                                 rclcpp::Duration::from_seconds(10),
-                                 std::bind(&DraftPC2Assembler::isCallbackAvailableSetter, this));
+
   }
 
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    if (isCallbackAvailableGetter())
+    if ((*tf_buffer_).canTransform("base_link", "laser_scan", tf2::TimePointZero, 10s) && rclcpp::ok())
     {
       sensor_msgs::msg::PointCloud2 cloud;
       pcl::PCLPointCloud2 pcl_pc;
@@ -59,14 +59,7 @@ private:
       publisher_->publish(cloud);
     }
   }
-  void isCallbackAvailableSetter()
-  {
-    isCallbackAvailable = true;
-  }
-  bool isCallbackAvailableGetter()
-  {
-    return isCallbackAvailable;
-  }
+
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
@@ -74,7 +67,6 @@ private:
   laser_geometry::LaserProjection projector_;
   pcl::PCLPointCloud2::Ptr draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
-  bool isCallbackAvailable = false;
 };
 
 int main(int argc, char *argv[])
