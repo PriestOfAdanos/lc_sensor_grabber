@@ -29,7 +29,6 @@ def generate_launch_description():
             executable='rplidar_scan_publisher',
             name='rplidar_scan_publisher',
             output='both',            
-            parameters=[config],
             respawn=False
         ),
         Node(
