@@ -38,7 +38,7 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
-    tf_buffer_->waitForTransform("base_link", "top", this->now(),
+    tf_buffer_->waitForTransform("base_link", "top", now,
                                  rclcpp::Duration::from_seconds(10),
                                  std::bind(&DraftPC2Assembler::isCallbackAvailableSetter, this));
   }
@@ -75,6 +75,7 @@ private:
   pcl::PCLPointCloud2::Ptr draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
   bool isCallbackAvailable = false;
+  rclcpp::Time::now	now;
 };
 
 int main(int argc, char *argv[])
