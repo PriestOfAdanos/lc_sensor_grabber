@@ -26,8 +26,8 @@ scan_assembler_node:
 
 top_to_lidar_tf_static_publisher_node: 
   ros__parameters:
-    parent_frame_id: 'base_link'
-    child_frame_id: 'top'
+    parent_frame_id: 'top'
+    child_frame_id: 'laser_frame'
     translationXYZ: 
       - 0.142
       - 0.0

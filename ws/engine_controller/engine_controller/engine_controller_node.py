@@ -44,10 +44,10 @@ class EngineControllerNode(Node):
         self.make_step = self.create_service(MakeStep, 'make_step', self.make_step_callback)
         self.set_step_angle = self.create_service(SetStepAngle, 'set_step_angle', self.set_step_angle_callback)
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.base_link_to_top_tf_publisher()
+        self.timer = self.create_timer(0.5, self.base_link_to_top_tf_publisher)
+        
 
         if self.prod_mode:
-            
             self.RPI_GPIO = GPIO
             self.RPI_GPIO.setmode(self.RPI_GPIO.BCM)
             self.RPI_GPIO.setup(self.direction_pin, self.RPI_GPIO.OUT)
@@ -69,18 +69,16 @@ class EngineControllerNode(Node):
     
     def base_link_to_top_tf_publisher(self):
         t = TransformStamped()
-
         t.header.stamp = self.get_clock().now().to_msg()
         t.header.frame_id = self.parent_frame_id 
         t.child_frame_id = self.child_frame_id 
-        
         (t.transform.translation.x, t.transform.translation.y, t.transform.translation.z) = self.translationXYZ
         q = tf_transformations.quaternion_from_euler(0, 0, math.radians(self.angle),axes='rxyz')
         t.transform.rotation.w = q[0]
         t.transform.rotation.x = q[1]
         t.transform.rotation.y = q[2]
         t.transform.rotation.z = q[3]
-
+        self.get_logger().info('tf sent')
         self.tf_broadcaster.sendTransform(t)
         
     def set_step_angle_callback(self, req, res):

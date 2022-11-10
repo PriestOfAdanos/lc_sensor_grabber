@@ -36,23 +36,36 @@ public:
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().durability_volatile();
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", qos, 
+        "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
+    tf_buffer_->waitForTransform("base_link", "top", this->now(),
+                                 rclcpp::Duration::from_seconds(10),
+                                 std::bind(&DraftPC2Assembler::isCallbackAvailableSetter, this));
   }
 
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-
-    sensor_msgs::msg::PointCloud2 cloud;
-    pcl::PCLPointCloud2 pcl_pc;
-    projector_.transformLaserScanToPointCloud("base_link", *scan_in,
-                                              cloud, *tf_buffer_);
-    pcl_conversions::toPCL(cloud, pcl_pc);
-    (pcl_pc) += (*draftCloud);
-    *draftCloud = pcl_pc;
-    pcl_conversions::fromPCL(*draftCloud, cloud);
-    publisher_->publish(cloud);
+    if (isCallbackAvailableGetter())
+    {
+      sensor_msgs::msg::PointCloud2 cloud;
+      pcl::PCLPointCloud2 pcl_pc;
+      projector_.transformLaserScanToPointCloud("base_link", *scan_in,
+                                                cloud, *tf_buffer_);
+      pcl_conversions::toPCL(cloud, pcl_pc);
+      (pcl_pc) += (*draftCloud);
+      *draftCloud = pcl_pc;
+      pcl_conversions::fromPCL(*draftCloud, cloud);
+      publisher_->publish(cloud);
+    }
+  }
+  void isCallbackAvailableSetter()
+  {
+    isCallbackAvailable = true;
+  }
+  bool isCallbackAvailableGetter()
+  {
+    return isCallbackAvailable;
   }
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
@@ -61,6 +74,7 @@ private:
   laser_geometry::LaserProjection projector_;
   pcl::PCLPointCloud2::Ptr draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
+  bool isCallbackAvailable = false;
 };
 
 int main(int argc, char *argv[])
