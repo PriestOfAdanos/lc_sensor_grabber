@@ -38,7 +38,7 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
-    tf_buffer_->waitForTransform("base_link", "top", rclcpp::Time::now(),
+    tf_buffer_->waitForTransform("base_link", "top", rclcpp::Clock().now(),
                                  rclcpp::Duration::from_seconds(10),
                                  std::bind(&DraftPC2Assembler::isCallbackAvailableSetter, this));
   }
