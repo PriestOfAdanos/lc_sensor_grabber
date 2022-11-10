@@ -78,7 +78,6 @@ class EngineControllerNode(Node):
         t.transform.rotation.x = q[1]
         t.transform.rotation.y = q[2]
         t.transform.rotation.z = q[3]
-        self.get_logger().info('tf sent')
         self.tf_broadcaster.sendTransform(t)
         
     def set_step_angle_callback(self, req, res):
