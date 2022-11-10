@@ -46,7 +46,7 @@ public:
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 1ms) && rclcpp::ok())
+    if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 0ms) && rclcpp::ok())
     {
       sensor_msgs::msg::PointCloud2 cloud;
       pcl::PCLPointCloud2 pcl_pc;
