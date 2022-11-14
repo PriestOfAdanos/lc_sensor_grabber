@@ -46,7 +46,7 @@ public:
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    if ((*tf_listener_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 1s) && rclcpp::ok())
+    if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 1s) && rclcpp::ok())
     {
       sensor_msgs::msg::PointCloud2 cloud;
       pcl::PCLPointCloud2 pcl_pc;
@@ -63,7 +63,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
-  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
   pcl::PCLPointCloud2::Ptr draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
