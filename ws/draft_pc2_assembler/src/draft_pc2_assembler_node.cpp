@@ -40,14 +40,28 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
-
   }
 
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 1s) && rclcpp::ok())
+    // if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 1s) && rclcpp::ok())
+    // {
+    //   sensor_msgs::msg::PointCloud2 cloud;
+    //   pcl::PCLPointCloud2 pcl_pc;
+    //   projector_.transformLaserScanToPointCloud("base_link", *scan_in,
+    //                                             cloud, *tf_buffer_);
+    //   pcl_conversions::toPCL(cloud, pcl_pc);
+    //   (pcl_pc) += (*draftCloud);
+    //   *draftCloud = pcl_pc;
+    //   pcl_conversions::fromPCL(*draftCloud, cloud);
+    //   publisher_->publish(cloud);
+    // }
+
+    try
     {
+      (*tf_buffer_).waitForTransform("/base_link", "/map", ros::Time(0), ros::Duration(3.0));
+      std::cout << "transform exist\n";
       sensor_msgs::msg::PointCloud2 cloud;
       pcl::PCLPointCloud2 pcl_pc;
       projector_.transformLaserScanToPointCloud("base_link", *scan_in,
@@ -59,7 +73,6 @@ private:
       publisher_->publish(cloud);
     }
   }
-
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
