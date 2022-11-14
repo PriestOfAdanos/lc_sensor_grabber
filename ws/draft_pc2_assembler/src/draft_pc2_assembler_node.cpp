@@ -60,7 +60,7 @@ private:
 
     try
     {
-      (*tf_buffer_).waitForTransform("/base_link", "/map", ros::Time(0), ros::Duration(3.0));
+      (*tf_buffer_).waitForTransform("/base_link", "/map", tf2::TimePointZero, 1s);
       std::cout << "transform exist\n";
       sensor_msgs::msg::PointCloud2 cloud;
       pcl::PCLPointCloud2 pcl_pc;
