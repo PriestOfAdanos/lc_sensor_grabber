@@ -57,16 +57,9 @@ private:
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
       pcl_conversions::toPCL(cloud, pcl_pc);
-
       (pcl_pc) += (draftCloud);
-      RCLCPP_INFO(this->get_logger(), "addition");
-
       draftCloud = pcl_pc;
-      RCLCPP_INFO(this->get_logger(), "exchange");
-
       pcl_conversions::fromPCL(draftCloud, cloud);
-      RCLCPP_INFO(this->get_logger(), "reconversion");
-
       publisher_->publish(cloud);
     }
     catch (tf2::TransformException &ex)

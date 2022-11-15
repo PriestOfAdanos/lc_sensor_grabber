@@ -61,7 +61,6 @@ class EngineControllerNode(Node):
         
 
         if self.prod_mode:
-            
             self.RPI_GPIO = GPIO
             self.RPI_GPIO.setmode(self.RPI_GPIO.BCM)
             self.RPI_GPIO.setup(self.direction_pin, self.RPI_GPIO.OUT)
@@ -80,7 +79,6 @@ class EngineControllerNode(Node):
         return res
     
     def on_scan_tf_publisher(self, msg):
-        self.get_logger().warn("tf sent")
         t = TransformStamped()
         t.header.stamp = msg.header.stamp
         t.header.frame_id = self.parent_frame_id 
