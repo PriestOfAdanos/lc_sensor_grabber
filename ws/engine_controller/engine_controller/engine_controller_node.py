@@ -76,7 +76,6 @@ class EngineControllerNode(Node):
             self.RPI_GPIO.output(self.step_pin, self.RPI_GPIO.LOW)
             time.sleep(self.delay)
         self.angle += self.step_angle
-        self.base_link_to_top_tf_publisher()
         res.done = True
         return res
     
