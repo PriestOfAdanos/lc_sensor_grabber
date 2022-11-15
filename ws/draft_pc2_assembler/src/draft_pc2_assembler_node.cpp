@@ -44,23 +44,29 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
+    timer_ = this->create_wall_timer(
+        1s, std::bind(&DraftPC2Assembler::timer_callback, this));
   }
 
 private:
+  void timer_callback()
+  {
+      sensor_msgs::msg::PointCloud2 cloud;
+      pcl_conversions::fromPCL(draftCloud, cloud);
+      publisher_->publish(cloud);
+  }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
     try
     {
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
-      transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame",tf2::TimePointZero);
+      transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
       pcl::PCLPointCloud2 pcl_pc;
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
       pcl_conversions::toPCL(cloud, pcl_pc);
       (pcl_pc) += (draftCloud);
       draftCloud = pcl_pc;
-      pcl_conversions::fromPCL(draftCloud, cloud);
-      publisher_->publish(cloud);
     }
     catch (tf2::TransformException &ex)
     {
@@ -75,6 +81,7 @@ private:
   pcl::PCLPointCloud2 draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
   geometry_msgs::msg::TransformStamped transformStamped;
+  rclcpp::TimerBase::SharedPtr timer_;
 };
 
 int main(int argc, char *argv[])
