@@ -8,7 +8,10 @@ from lc_interfaces.srv import MakeStep, SetStepAngle
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from tf2_ros import TransformBroadcaster
-try:
+from sensor_msgs.msg import LaserScan
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+
+try: 
     import RPi.GPIO as GPIO 
 except:
     pass
@@ -44,10 +47,21 @@ class EngineControllerNode(Node):
         self.make_step = self.create_service(MakeStep, 'make_step', self.make_step_callback)
         self.set_step_angle = self.create_service(SetStepAngle, 'set_step_angle', self.set_step_angle_callback)
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.timer = self.create_timer(0.5, self.base_link_to_top_tf_publisher)
+                
+        qos_profile = QoSProfile(
+            reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
+            history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+            depth=10
+        )
+        self.LaserScanSubscription = self.create_subscription(
+            LaserScan,
+            'scan',
+            self.on_scan_tf_publisher,
+            qos_profile=qos_profile)
         
 
         if self.prod_mode:
+            
             self.RPI_GPIO = GPIO
             self.RPI_GPIO.setmode(self.RPI_GPIO.BCM)
             self.RPI_GPIO.setup(self.direction_pin, self.RPI_GPIO.OUT)
@@ -61,15 +75,15 @@ class EngineControllerNode(Node):
             time.sleep(self.delay)
             self.RPI_GPIO.output(self.step_pin, self.RPI_GPIO.LOW)
             time.sleep(self.delay)
-        
         self.angle += self.step_angle
         self.base_link_to_top_tf_publisher()
         res.done = True
         return res
     
-    def base_link_to_top_tf_publisher(self):
+    def on_scan_tf_publisher(self, msg):
+        self.get_logger().warn("tf sent")
         t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.stamp = msg.header.stamp
         t.header.frame_id = self.parent_frame_id 
         t.child_frame_id = self.child_frame_id 
         (t.transform.translation.x, t.transform.translation.y, t.transform.translation.z) = self.translationXYZ

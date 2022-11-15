@@ -33,6 +33,7 @@ ament_target_dependencies(
   pcl_conversions
   pcl_ros
   PCL
+  tf2
 )
 
 install(TARGETS draft_pc2_assembler_node

@@ -15,11 +15,15 @@
 #include "tf2_ros/message_filter.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include <sensor_msgs/msg/point_cloud2.h>
+#include <geometry_msgs/msg/transform_stamped.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/common/projection_matrix.h>
+#include <tf2/convert.h>
+#include <tf2/transform_datatypes.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 
 using std::placeholders::_1;
 using namespace std::chrono_literals;
@@ -40,33 +44,44 @@ public:
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
-
   }
 
 private:
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-    if ((*tf_buffer_).canTransform("base_link", "laser_frame", tf2::TimePointZero, 4s) && rclcpp::ok())
+    try
     {
-      sensor_msgs::msg::PointCloud2 cloud;
+      sensor_msgs::msg::PointCloud2 cloud, cloud_out;
+      transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame",tf2::TimePointZero);
       pcl::PCLPointCloud2 pcl_pc;
-      projector_.transformLaserScanToPointCloud("base_link", *scan_in,
-                                                cloud, *tf_buffer_);
+      projector_.projectLaser(*scan_in, cloud);
+      tf2::doTransform(cloud, cloud_out, transformStamped);
       pcl_conversions::toPCL(cloud, pcl_pc);
-      (pcl_pc) += (*draftCloud);
-      *draftCloud = pcl_pc;
-      pcl_conversions::fromPCL(*draftCloud, cloud);
+
+      (pcl_pc) += (draftCloud);
+      RCLCPP_INFO(this->get_logger(), "addition");
+
+      draftCloud = pcl_pc;
+      RCLCPP_INFO(this->get_logger(), "exchange");
+
+      pcl_conversions::fromPCL(draftCloud, cloud);
+      RCLCPP_INFO(this->get_logger(), "reconversion");
+
       publisher_->publish(cloud);
     }
+    catch (tf2::TransformException &ex)
+    {
+      RCLCPP_WARN(this->get_logger(), "Failure %s\n", ex.what());
+    }
   }
-
 
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
-  pcl::PCLPointCloud2::Ptr draftCloud;
+  pcl::PCLPointCloud2 draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
+  geometry_msgs::msg::TransformStamped transformStamped;
 };
 
 int main(int argc, char *argv[])
