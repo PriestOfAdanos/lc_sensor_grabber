@@ -28,11 +28,11 @@
 using std::placeholders::_1;
 using namespace std::chrono_literals;
 
-class DraftPC2Assembler : public rclcpp::Node
+class ScanToPC2Publisher : public rclcpp::Node
 {
 public:
-  DraftPC2Assembler()
-      : Node("draft_pc2_assembler_node")
+  ScanToPC2Publisher()
+      : Node("scan_to_pc_publisher_node")
   {
     tf_buffer_ =
         std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -43,9 +43,9 @@ public:
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
-        std::bind(&DraftPC2Assembler::scanCallback, this, std::placeholders::_1));
+        std::bind(&ScanToPC2Publisher::scanCallback, this, std::placeholders::_1));
     timer_ = this->create_wall_timer(
-        1s, std::bind(&DraftPC2Assembler::timer_callback, this));
+        1s, std::bind(&ScanToPC2Publisher::timer_callback, this));
   }
 
 private:
@@ -64,8 +64,8 @@ private:
       pcl::PCLPointCloud2 pcl_pc;
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
-      pcl_conversions::toPCL(cloud, pcl_pc);
-      (pcl_pc) += (draftCloud);
+      pcl_conversions::toPCL(cloud_out, pcl_pc);
+      (pcl_pc) += (draftCloud); 
       draftCloud = pcl_pc;
     }
     catch (tf2::TransformException &ex)
@@ -87,7 +87,7 @@ private:
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<DraftPC2Assembler>());
+  rclcpp::spin(std::make_shared<ScanToPC2Publisher>());
   rclcpp::shutdown();
   return 0;
 }

@@ -56,9 +56,9 @@ def generate_launch_description():
             respawn=False
         ),
         Node(
-            package='draft_pc2_assembler',
-            executable='draft_pc2_assembler_node',
-            name='draft_pc2_assembler_node',
+            package='scan_to_pc_publisher',
+            executable='scan_to_pc_publisher_node',
+            name='scan_to_pc_publisher_node',
             output='both',
             parameters=[config],
             respawn=False

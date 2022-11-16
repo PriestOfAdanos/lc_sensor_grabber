@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(draft_pc2_assembler)
+project(scan_to_pc_publisher)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -17,13 +17,13 @@ find_package(rclcpp REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
 
-add_executable(draft_pc2_assembler_node src/draft_pc2_assembler_node.cpp)
-target_include_directories(draft_pc2_assembler_node PUBLIC
+add_executable(scan_to_pc_publisher_node src/scan_to_pc_publisher_node.cpp)
+target_include_directories(scan_to_pc_publisher_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(draft_pc2_assembler_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(scan_to_pc_publisher_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  draft_pc2_assembler_node
+  scan_to_pc_publisher_node
   laser_geometry
   sensor_msgs
   lc_interfaces
@@ -36,7 +36,7 @@ ament_target_dependencies(
   tf2
 )
 
-install(TARGETS draft_pc2_assembler_node
+install(TARGETS scan_to_pc_publisher_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

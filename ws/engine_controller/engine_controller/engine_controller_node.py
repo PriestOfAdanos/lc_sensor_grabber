@@ -84,7 +84,7 @@ class EngineControllerNode(Node):
         t.header.frame_id = self.parent_frame_id 
         t.child_frame_id = self.child_frame_id 
         (t.transform.translation.x, t.transform.translation.y, t.transform.translation.z) = self.translationXYZ
-        q = tf_transformations.quaternion_from_euler(0, 0, math.radians(self.angle),axes='rxyz')
+        q = tf_transformations.quaternion_from_euler(math.radians(self.angle), 0, 0,axes='rxyz')
         t.transform.rotation.w = q[0]
         t.transform.rotation.x = q[1]
         t.transform.rotation.y = q[2]

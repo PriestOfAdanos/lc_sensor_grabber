@@ -34,7 +34,7 @@ class TopToLidarTfStaticPublisher(Node):
        static_transformStamped.transform.translation.y, 
        static_transformStamped.transform.translation.z) = self.translationXYZ
       
-      quat = tf_transformations.quaternion_from_euler(0, math.pi/2, 0,axes='rxyz')
+      quat = tf_transformations.quaternion_from_euler(0, -math.pi/2, 0,axes='rxyz')
       
       static_transformStamped.transform.rotation.w = quat[0]
       static_transformStamped.transform.rotation.x = quat[1]
