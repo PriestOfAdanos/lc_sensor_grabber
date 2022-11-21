@@ -24,6 +24,7 @@
 #include <tf2/convert.h>
 #include <tf2/transform_datatypes.h>
 #include <tf2_sensor_msgs/tf2_sensor_msgs.h>
+#include "lc_interfaces/msg/is_recording.hpp"
 
 using std::placeholders::_1;
 using namespace std::chrono_literals;
@@ -41,19 +42,39 @@ public:
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("draft_scan", 10);
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort().durability_volatile();
 
-    subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+    laser_scan_subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "scan", qos,
         std::bind(&ScanToPC2Publisher::scanCallback, this, std::placeholders::_1));
-    timer_ = this->create_wall_timer(
-        1s, std::bind(&ScanToPC2Publisher::timer_callback, this));
+    // timer_ = this->create_wall_timer(
+    //     1s, std::bind(&ScanToPC2Publisher::timerCallback, this));
+    is_recording_subscription_ = this->create_subscription<lc_interfaces::msg::IsRecording>(
+        "is_recording",
+        10,
+        std::bind(&ScanToPC2Publisher::isRecordingCallback, this, std::placeholders::_1));
   }
 
 private:
-  void timer_callback()
+  // void timerCallback()
+  // {
+  //   sensor_msgs::msg::PointCloud2 cloud;
+  //   pcl_conversions::fromPCL(pcl_pc, cloud);
+    
+  // }
+
+  void isRecordingCallback(const lc_interfaces::msg::IsRecording::SharedPtr msg)
   {
-      sensor_msgs::msg::PointCloud2 cloud;
-      pcl_conversions::fromPCL(draftCloud, cloud);
-      publisher_->publish(cloud);
+    if (is_recording != msg->is_recording)
+    {
+
+      is_recording = msg->is_recording;
+
+      if (is_recording == false)
+      {
+        // if it is false now, it must mean it was true before, so we know
+        //  that recording went from true to false, so we need to save the pcd
+        writer.write("exampe_pcd.pcd", draftCloud);
+      }
+    }
   }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
@@ -61,11 +82,14 @@ private:
     {
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
-      pcl::PCLPointCloud2 pcl_pc;
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
+      publisher_->publish(cloud_out);
       pcl_conversions::toPCL(cloud_out, pcl_pc);
-      (pcl_pc) += (draftCloud); 
+      if (is_recording)
+      {
+        (pcl_pc) += (draftCloud);
+      }
       draftCloud = pcl_pc;
     }
     catch (tf2::TransformException &ex)
@@ -74,7 +98,8 @@ private:
     }
   }
 
-  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscription_;
+  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_scan_subscription_;
+  rclcpp::Subscription<lc_interfaces::msg::IsRecording>::SharedPtr is_recording_subscription_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
@@ -82,6 +107,9 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
   geometry_msgs::msg::TransformStamped transformStamped;
   rclcpp::TimerBase::SharedPtr timer_;
+  bool is_recording;
+  pcl::PCDWriter writer;
+  pcl::PCLPointCloud2 pcl_pc;
 };
 
 int main(int argc, char *argv[])

@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MakeScan.srv"
   "srv/SetStepAngle.srv"
   "msg/PercentageDone.msg"
+  "msg/IsRecording.msg"
   DEPENDENCIES sensor_msgs std_msgs geometry_msgs
 )
 

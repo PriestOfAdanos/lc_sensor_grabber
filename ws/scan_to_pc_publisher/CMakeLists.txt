@@ -12,7 +12,6 @@ find_package(laser_geometry REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(lc_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(tf2_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
@@ -28,7 +27,6 @@ ament_target_dependencies(
   sensor_msgs
   lc_interfaces
   tf2_ros
-  tf2_msgs
   rclcpp
   pcl_conversions
   pcl_ros

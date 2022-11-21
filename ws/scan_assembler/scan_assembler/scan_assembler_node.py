@@ -8,13 +8,16 @@ import lc_interfaces
 import rclpy
 import rosbag2_py
 import sensor_msgs.msg
-import tf2_msgs.msg
+import std_msgs.msg
 from lc_interfaces.srv import MakeScan, MakeStep
+from lc_interfaces.msg import IsRecording
+
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from rclpy.serialization import serialize_message
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 # from builtin_interfaces.msg import Time
 # TODo(PriestOfAdanos): Split into separate classes (single responsibility)
@@ -56,6 +59,9 @@ class ScanAssembler(Node):
             self.make_scan_callback,
             callback_group=self.reentrant_callback_group,
         )
+        
+        self.is_recording_publisher_ = self.create_publisher(IsRecording, 'is_recording', 10)
+        self.create_timer(0.5, self.is_recording_message_publisher)
 
         self.writer = rosbag2_py.SequentialWriter()
 
@@ -69,7 +75,11 @@ class ScanAssembler(Node):
         self.set_recording_on()
         self.topic_name_type_dict = dict(self.get_topic_names_and_types())
         # call service to make draft pointcloud2
-
+        qos_profile = QoSProfile(
+            reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
+            history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+            depth=10
+        )
         for topic in self.topics_to_subscribe:
             topic_type_list = self.topic_name_type_dict[topic]
             self.topic_storage_metadata_infos[
@@ -82,7 +92,7 @@ class ScanAssembler(Node):
                 eval(topic_type_list[0].replace("/", ".")),
                 topic,
                 partial(self.topic_callback, topic_name=topic),
-                10,
+                qos_profile=qos_profile,
             )
             self.writer.create_topic(self.topic_storage_metadata_infos[topic])
 
@@ -91,16 +101,19 @@ class ScanAssembler(Node):
             topic_name, serialize_message(msg), self.get_clock().now().nanoseconds
         )
 
+    def is_recording_message_publisher(self):
+            msg = IsRecording()
+            msg.is_recording = self.is_recording()
+            self.is_recording_publisher_.publish(msg)
+        
     def is_recording(self):
         return self._is_recording
 
     def set_recording_on(self):
-        if self.is_recording():
-            self._is_recording = True
+        self._is_recording = True
 
     def set_recording_off(self):
-        if self.is_recording():
-            self._is_recording = False
+        self._is_recording = False
 
     def stop_recording(self):
         del self.writer
@@ -109,7 +122,8 @@ class ScanAssembler(Node):
     # TODO(PriestOfAdanos): add error raising to above functions
 
     def make_scan_callback(self, req, res):
-        self.start_recording()
+        self.set_recording_on()
+        # self.start_recording()
         for _ in range(self.steps_to_full_circle):
             time.sleep(self.pause_beetwen_steps)
             self.get_logger().info("started to make steps")
