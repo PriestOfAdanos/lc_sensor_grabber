@@ -72,7 +72,7 @@ private:
       {
         // if it is false now, it must mean it was true before, so we know
         //  that recording went from true to false, so we need to save the pcd
-        writer.write("exampe_pcd.pcd", draftCloud);
+        writer.write("/bags/example_pcd.pcd", draftCloud);
       }
     }
   }
