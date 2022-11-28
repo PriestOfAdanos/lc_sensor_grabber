@@ -3,6 +3,8 @@
 #include <chrono>
 
 #include <pcl/io/obj_io.h>
+#include <pcl/io/pcd_io.h>
+
 
 #include <pcl/features/normal_3d.h>
 #include <pcl/surface/gp3.h>
@@ -58,13 +60,6 @@ public:
   }
 
 private:
-  // void timerCallback()
-  // {
-  //   sensor_msgs::msg::PointCloud2 cloud;
-  //   pcl_conversions::fromPCL(pcl_pc, cloud);
-
-  // }
-
   void isRecordingCallback(const lc_interfaces::msg::IsRecording::SharedPtr msg)
   {
     if (is_recording != msg->is_recording)
@@ -83,8 +78,8 @@ private:
         // Object for storing both the points and the normals.
         pcl::PointCloud<pcl::PointNormal>::Ptr cloudNormals(new pcl::PointCloud<pcl::PointNormal>);
 
-        writer.write("/bags/raw_points.pcd", draftCloud);
-
+        pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
+        draftCloud->clear();
         pcl::io::loadPCDFile<pcl::PointXYZ>("/bags/raw_points.pcd", *cloud);
 
         // Normal estimation.
@@ -136,17 +131,22 @@ private:
   {
     try
     {
+      pcl::PCLPointCloud2 pcl_pc2;
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
       publisher_->publish(cloud_out);
-      pcl_conversions::toPCL(cloud_out, pcl_pc);
+      pcl_conversions::toPCL(cloud_out, pcl_pc2);
+
+      // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+      pcl::fromPCLPointCloud2(pcl_pc2, *pcl_pc);
+
       if (is_recording)
       {
-        (pcl_pc) += (draftCloud);
+        (*pcl_pc) += (*draftCloud);
       }
-      draftCloud = pcl_pc;
+      *draftCloud = *pcl_pc;
     }
     catch (tf2::TransformException &ex)
     {
@@ -159,13 +159,12 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
-  pcl::PCLPointCloud2 draftCloud;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr draftCloud;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
   geometry_msgs::msg::TransformStamped transformStamped;
   rclcpp::TimerBase::SharedPtr timer_;
   bool is_recording;
-  pcl::PCDWriter writer;
-  pcl::PCLPointCloud2 pcl_pc;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_pc;
 };
 
 int main(int argc, char *argv[])
