@@ -5,7 +5,6 @@
 #include <pcl/io/obj_io.h>
 #include <pcl/io/pcd_io.h>
 
-
 #include <pcl/features/normal_3d.h>
 #include <pcl/surface/gp3.h>
 #include "rclcpp/rclcpp.hpp"
@@ -31,6 +30,7 @@
 #include <tf2/transform_datatypes.h>
 #include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 #include "lc_interfaces/msg/is_recording.hpp"
+#include <pcl/filters/statistical_outlier_removal.h>
 
 using std::placeholders::_1;
 using namespace std::chrono_literals;
@@ -79,8 +79,15 @@ private:
         pcl::PointCloud<pcl::PointNormal>::Ptr cloudNormals(new pcl::PointCloud<pcl::PointNormal>);
 
         pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
+
+        pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+        sor.setInputCloud(draftCloud);
+        sor.setMeanK(50);
+        sor.setStddevMulThresh(1.0);
+        sor.filter(*cloud);
+
         draftCloud->clear();
-        pcl::io::loadPCDFile<pcl::PointXYZ>("/bags/raw_points.pcd", *cloud);
+        // pcl::io::loadPCDFile<pcl::PointXYZ>("/bags/raw_points.pcd", *cloud);
 
         // Normal estimation.
         pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normalEstimation;
