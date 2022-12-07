@@ -132,6 +132,7 @@ private:
 
         pcl::io::saveOBJFile("/bags/constructed_mesh.obj", triangles);
       }
+      //todo add cleanup after scan is done (delete pointcloud)
     }
   }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
