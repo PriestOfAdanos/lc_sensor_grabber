@@ -153,6 +153,8 @@ private:
       if (is_recording)
       {
         (*pcl_pc) += (*draftCloud);
+        RCLCPP_INFO(node->get_logger(), "is_recording", 4);
+
       }
       *draftCloud = *pcl_pc;
     }
