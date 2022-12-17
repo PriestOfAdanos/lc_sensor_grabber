@@ -137,6 +137,8 @@ private:
   }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
+          RCLCPP_INFO(this->get_logger(), "lets try ...");
+
     try
     {
       pcl::PCLPointCloud2 pcl_pc2;
@@ -149,6 +151,7 @@ private:
 
       // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(pcl_pc2, *pcl_pc);
+      RCLCPP_INFO(this->get_logger(), "we tried");
 
       if (is_recording==true)
       {
