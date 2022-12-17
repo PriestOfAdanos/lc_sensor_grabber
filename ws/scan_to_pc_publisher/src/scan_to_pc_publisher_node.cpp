@@ -150,7 +150,7 @@ private:
       // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(pcl_pc2, *pcl_pc);
 
-      if (is_recording)
+      if (is_recording==true)
       {
         (*pcl_pc) += (*draftCloud);
         RCLCPP_INFO(this->get_logger(), "is_recording");
