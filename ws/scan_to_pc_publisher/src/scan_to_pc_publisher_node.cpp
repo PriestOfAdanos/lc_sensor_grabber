@@ -141,7 +141,7 @@ private:
 
     try
     {
-      pcl::PCLPointCloud2 pcl_pc2;
+      pcl::PCLPointCloud2 pcl_pc2 = new pcl::PCLPointCloud2;;
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
       projector_.projectLaser(*scan_in, cloud);
