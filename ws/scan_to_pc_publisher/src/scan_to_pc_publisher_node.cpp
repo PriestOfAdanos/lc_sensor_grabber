@@ -79,16 +79,18 @@ private:
         pcl::PointCloud<pcl::PointNormal>::Ptr cloudNormals(new pcl::PointCloud<pcl::PointNormal>);
 
         pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
+        const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
+        draftCloud->clear();
+
 
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-        sor.setInputCloud(draftCloud);
+        sor.setInputCloud(const_cloud);
         sor.setMeanK(50);
         sor.setStddevMulThresh(1.0);
         sor.filter(*cloud);
 
-        draftCloud->clear();
         // pcl::io::loadPCDFile<pcl::PointXYZ>("/bags/raw_points.pcd", *cloud);
-
+        // const_cloud.clear();
         // Normal estimation.
         pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normalEstimation;
         normalEstimation.setInputCloud(cloud);
@@ -141,6 +143,7 @@ private:
 
     try
     {
+      
       pcl::PCLPointCloud2 *pcl_pc2 = new pcl::PCLPointCloud2;      
       RCLCPP_INFO(this->get_logger(), "L1");
 
@@ -186,12 +189,15 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   laser_geometry::LaserProjection projector_;
-  pcl::PointCloud<pcl::PointXYZ>::Ptr draftCloud;
+  pcl::PointCloud<pcl::PointXYZ> *draftCloud = new pcl::PointCloud<pcl::PointXYZ>;
+
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_;
   geometry_msgs::msg::TransformStamped transformStamped;
   rclcpp::TimerBase::SharedPtr timer_;
   bool is_recording;
-  pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_pc;
+  pcl::PointCloud<pcl::PointXYZ> *pcl_pc = new pcl::PointCloud<pcl::PointXYZ>;
+
+
 };
 
 int main(int argc, char *argv[])
