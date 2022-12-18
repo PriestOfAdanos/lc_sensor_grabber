@@ -79,12 +79,13 @@ private:
         pcl::PointCloud<pcl::PointNormal>::Ptr cloudNormals(new pcl::PointCloud<pcl::PointNormal>);
 
         pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
-        const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
+        pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+        {
+          const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
+          sor.setInputCloud(const_cloud);
+        }
         draftCloud->clear();
 
-
-        pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-        sor.setInputCloud(const_cloud);
         sor.setMeanK(50);
         sor.setStddevMulThresh(1.0);
         sor.filter(*cloud);
@@ -134,14 +135,14 @@ private:
 
         pcl::io::saveOBJFile("/bags/constructed_mesh.obj", triangles);
       }
-      //todo add cleanup after scan is done (delete pointcloud)
+      // todo add cleanup after scan is done (delete pointcloud)
     }
   }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
     try
     {
-      pcl::PCLPointCloud2 *pcl_pc2 = new pcl::PCLPointCloud2;      
+      pcl::PCLPointCloud2 *pcl_pc2 = new pcl::PCLPointCloud2;
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
       projector_.projectLaser(*scan_in, cloud);
@@ -152,7 +153,7 @@ private:
       // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(*pcl_pc2, *pcl_pc);
 
-      if (is_recording==true)
+      if (is_recording == true)
       {
         (*pcl_pc) += (*draftCloud);
       }
@@ -176,8 +177,6 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
   bool is_recording;
   pcl::PointCloud<pcl::PointXYZ> *pcl_pc = new pcl::PointCloud<pcl::PointXYZ>;
-
-
 };
 
 int main(int argc, char *argv[])
