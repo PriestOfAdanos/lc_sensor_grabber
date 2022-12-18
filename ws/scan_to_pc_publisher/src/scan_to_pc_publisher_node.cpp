@@ -111,7 +111,7 @@ private:
         // Output object, containing the mesh.
         pcl::PolygonMesh triangles;
         // Maximum distance between connected points (maximum edge length).
-        triangulation.setSearchRadius(0.025);
+        triangulation.setSearchRadius(0.25);
         // Maximum acceptable distance for a point to be considered,
         // relative to the distance of the nearest point.
         triangulation.setMu(2.5);
