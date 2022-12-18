@@ -141,16 +141,16 @@ private:
 
     try
     {
-      pcl::PCLPointCloud2 pcl_pc2 = new pcl::PCLPointCloud2;;
+      pcl::PCLPointCloud2 *pcl_pc2 = new pcl::PCLPointCloud2;
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
       projector_.projectLaser(*scan_in, cloud);
       tf2::doTransform(cloud, cloud_out, transformStamped);
       publisher_->publish(cloud_out);
-      pcl_conversions::toPCL(cloud_out, pcl_pc2);
+      pcl_conversions::toPCL(cloud_out, *pcl_pc2);
 
       // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-      pcl::fromPCLPointCloud2(pcl_pc2, *pcl_pc);
+      pcl::fromPCLPointCloud2(*pcl_pc2, *pcl_pc);
       RCLCPP_INFO(this->get_logger(), "we tried");
 
       if (is_recording==true)
