@@ -10,7 +10,7 @@ engine_controller_node:
       - 0.0
       - 0.0
       - 0.0
-    steps_to_full_circle: 12
+    steps_to_full_circle: 1000
 
 scan_assembler_node:
   ros__parameters:
@@ -21,7 +21,7 @@ scan_assembler_node:
       - '/tf_static'
       - '/scan'
     pause_beetwen_steps: 1 #seconds
-    steps_to_full_circle: 1200
+    steps_to_full_circle: 1000
     target_frame: "base_link"
 
 top_to_lidar_tf_static_publisher_node: 
