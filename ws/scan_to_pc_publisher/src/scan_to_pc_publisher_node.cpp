@@ -139,42 +139,22 @@ private:
   }
   void scanCallback(const sensor_msgs::msg::LaserScan::SharedPtr scan_in)
   {
-          RCLCPP_INFO(this->get_logger(), "lets try ...");
-
     try
     {
-      
       pcl::PCLPointCloud2 *pcl_pc2 = new pcl::PCLPointCloud2;      
-      RCLCPP_INFO(this->get_logger(), "L1");
-
       sensor_msgs::msg::PointCloud2 cloud, cloud_out;
-            RCLCPP_INFO(this->get_logger(), "L2");
-
       transformStamped = (*tf_buffer_).lookupTransform("base_link", "laser_frame", tf2::TimePointZero);
-            RCLCPP_INFO(this->get_logger(), "L3");
-
       projector_.projectLaser(*scan_in, cloud);
-            RCLCPP_INFO(this->get_logger(), "L4");
-
       tf2::doTransform(cloud, cloud_out, transformStamped);
-            RCLCPP_INFO(this->get_logger(), "L5");
-
       publisher_->publish(cloud_out);
-            RCLCPP_INFO(this->get_logger(), "L6");
-
       pcl_conversions::toPCL(cloud_out, *pcl_pc2);
-            RCLCPP_INFO(this->get_logger(), "L7");
-
 
       // pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(*pcl_pc2, *pcl_pc);
-      RCLCPP_INFO(this->get_logger(), "we tried");
 
       if (is_recording==true)
       {
         (*pcl_pc) += (*draftCloud);
-        RCLCPP_INFO(this->get_logger(), "is_recording");
-
       }
       *draftCloud = *pcl_pc;
     }
