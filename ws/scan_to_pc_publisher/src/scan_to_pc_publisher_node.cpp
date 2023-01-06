@@ -72,6 +72,7 @@ private:
         // SOS: https://pcl.gitbook.io/tutorial/part-2/part02-chapter06/part02-chapter06-triangulation-pcl-cpp
         // if it is false now, it must mean it was true before, so we know
         //  that recording went from true to false, so we need to save the pcd
+        pcl::PointCloud<pcl::PointXYZ>::Ptr unfiltered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         // Object for storing the normals.
         pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
@@ -80,11 +81,10 @@ private:
 
         pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-        
-        const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
-        sor.setInputCloud(const_cloud);
-        
         draftCloud->clear();
+        pcl::io::loadPCDFile<pcl::PointXYZ>("/bags/raw_points.pcd", *unfiltered_cloud);
+        sor.setInputCloud(unfiltered_cloud);
+        
 
         sor.setMeanK(50);
         sor.setStddevMulThresh(1.0);
