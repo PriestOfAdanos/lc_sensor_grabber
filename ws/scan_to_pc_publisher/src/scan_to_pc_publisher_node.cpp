@@ -80,10 +80,10 @@ private:
 
         pcl::io::savePCDFile("/bags/raw_points.pcd", *draftCloud);
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-        {
-          const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
-          sor.setInputCloud(const_cloud);
-        }
+        
+        const pcl::PointCloud<pcl::PointXYZ>::ConstPtr const_cloud = draftCloud->makeShared();
+        sor.setInputCloud(const_cloud);
+        
         draftCloud->clear();
 
         sor.setMeanK(50);
